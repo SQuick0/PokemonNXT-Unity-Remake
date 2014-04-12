@@ -70,23 +70,19 @@ public class Player : MonoBehaviour {
 		//swap pokemon
 		if (!click && !pokemonActive){
 			Pokemon oldPokemonSelection = pokemon;
-			if (trainer.pokemon.Count>0 && (Input.GetKey(KeyCode.Alpha1) ||  Input.GetKey(KeyCode.Keypad1)))	pokemon = trainer.pokemon[0];
-			if (trainer.pokemon.Count>1 && (Input.GetKey(KeyCode.Alpha2) ||  Input.GetKey(KeyCode.Keypad2)))	pokemon = trainer.pokemon[1];
-			if (trainer.pokemon.Count>2 && (Input.GetKey(KeyCode.Alpha3) ||  Input.GetKey(KeyCode.Keypad3)))	pokemon = trainer.pokemon[2];
-			if (trainer.pokemon.Count>3 && (Input.GetKey(KeyCode.Alpha4) ||  Input.GetKey(KeyCode.Keypad4)))	pokemon = trainer.pokemon[3];
-			if (trainer.pokemon.Count>4 && (Input.GetKey(KeyCode.Alpha5) ||  Input.GetKey(KeyCode.Keypad5)))	pokemon = trainer.pokemon[4];
-			if (trainer.pokemon.Count>5 && (Input.GetKey(KeyCode.Alpha6) ||  Input.GetKey(KeyCode.Keypad6)))	pokemon = trainer.pokemon[5];
-			if (trainer.pokemon.Count>6 && (Input.GetKey(KeyCode.Alpha7) ||  Input.GetKey(KeyCode.Keypad7)))	pokemon = trainer.pokemon[6];
-			if (trainer.pokemon.Count>7 && (Input.GetKey(KeyCode.Alpha8) ||  Input.GetKey(KeyCode.Keypad8)))	pokemon = trainer.pokemon[7];
-			if (trainer.pokemon.Count>8 && (Input.GetKey(KeyCode.Alpha9) ||  Input.GetKey(KeyCode.Keypad9)))	pokemon = trainer.pokemon[8];
-			if (trainer.pokemon.Count>9 && (Input.GetKey(KeyCode.Alpha0) ||  Input.GetKey(KeyCode.Keypad0)))	pokemon = trainer.pokemon[9];
-			if (Input.GetKey(KeyCode.PageUp) || Input.GetKey(KeyCode.Comma) || Input.GetKey(KeyCode.Minus) || Input.GetKey(KeyCode.KeypadMinus)){
+
+			for(int i = 1; i <= 10; i++) {
+				if (Rebind.GetInput("SELECT_POKE_PARTY_" + i))
+					pokemon = trainer.pokemon[i - 1];
+			}
+
+			if (Rebind.GetInput("SELECT_POKE_PREV")){
 				if (pokemon==trainer.pokemon[0])
 					pokemon = trainer.pokemon[trainer.pokemon.Count-1];
 				else
 					if (trainer.pokemon.Contains(pokemon))	pokemon = trainer.pokemon[trainer.pokemon.IndexOf(pokemon)-1];
 			}
-			if (Input.GetKey(KeyCode.PageDown) || Input.GetKey(KeyCode.Period) || Input.GetKey(KeyCode.Plus)|| Input.GetKey(KeyCode.KeypadPlus)){
+			if (Rebind.GetInput("SELECT_POKE_NEXT")){
 				if (pokemon==trainer.pokemon[trainer.pokemon.Count-1])
 					pokemon = trainer.pokemon[0];
 				else
@@ -159,20 +155,14 @@ public class Player : MonoBehaviour {
 		}
 	*/
 		//anticlick
-		if (!Input.GetKey(KeyCode.Alpha1) &&  !Input.GetKey(KeyCode.Keypad1)
-		    && !Input.GetKey(KeyCode.Alpha2) &&  !Input.GetKey(KeyCode.Keypad2)
-		    && !Input.GetKey(KeyCode.Alpha3) &&  !Input.GetKey(KeyCode.Keypad3)
-		    && !Input.GetKey(KeyCode.Alpha4) &&  !Input.GetKey(KeyCode.Keypad4)
-		    && !Input.GetKey(KeyCode.Alpha5) &&  !Input.GetKey(KeyCode.Keypad5)
-		    && !Input.GetKey(KeyCode.Alpha6) &&  !Input.GetKey(KeyCode.Keypad6)
-		    && !Input.GetKey(KeyCode.Alpha7) &&  !Input.GetKey(KeyCode.Keypad7)
-		    && !Input.GetKey(KeyCode.Alpha8) &&  !Input.GetKey(KeyCode.Keypad8)
-		    && !Input.GetKey(KeyCode.Alpha9) &&  !Input.GetKey(KeyCode.Keypad9)
-		    && !Input.GetKey(KeyCode.PageDown) &&  !Input.GetKey(KeyCode.PageUp)
-		    && !Input.GetKey(KeyCode.KeypadMinus) &&  !Input.GetKey(KeyCode.KeypadPlus)
-		    && !Input.GetKey(KeyCode.Minus) &&  !Input.GetKey(KeyCode.Equals)
-		    && !Input.GetKey(KeyCode.Comma) &&  !Input.GetKey(KeyCode.Period)
-			&& !Input.GetKey(KeyCode.Return) && !Input.GetKey(KeyCode.Escape)
+		bool anti = false;
+		for(int i = 1; i <= 10 && !anti; i++) {
+			if (Rebind.GetInput("SELECT_POKE_PARTY_" + i))
+			  anti = true;
+		}
+		
+		if (!anti && !Rebind.GetInput("SELECT_POKE_PREV") && !Rebind.GetInput("SELECT_POKE_NEXT")
+		    && !Rebind.GetInput("THROW_POKEBALL") && !Input.GetKey(KeyCode.Escape)
 		    && !Input.GetMouseButton(0) && !Input.GetMouseButton(1))
 			click = false;
 	}
