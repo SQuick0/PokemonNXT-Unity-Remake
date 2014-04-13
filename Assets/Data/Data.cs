@@ -19,10 +19,10 @@ public class Data
 	}
 
 	static public void LoadMock() {
-		//Insert mock test data items here. Things like in-game items can still be added in trainer create. 
-		//Remember to substitute the hardcoded item enumeration (ItemTypes) for database id values
-		items.Add(new DataItem(ItemTypes.Potion, 2)); //Potion
-		items.Add(new DataItem(ItemTypes.Pokeball, 5)); //Pokeball
+		//Insert mock database test data items here. Things like in-game items can still be added in trainer create.
+		//I still need to add in pockets and item flag values
+		items.Add(new DataItem(1, "Pokeball", "poke-ball.png", "A device for catching wild Pokemon. It's thrown like a ball at a Pokemon, comfortably encapsulating its target."));
+		items.Add(new DataItem(4, "Potion", "potion.png", "A spray-type medicine for treating wounds. It can be used to restore a small amount of HP to an injured Pokemon."));
 	}
 
 	//Connect to the database, query, record data and then DataQuery is be destroyed

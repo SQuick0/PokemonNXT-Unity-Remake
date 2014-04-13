@@ -8,7 +8,7 @@ public class Player : MonoBehaviour {
 
 	public static Trainer trainer = null;
 	public static Pokemon pokemon {get{return trainer.party.GetActivePokemon();} set{}}
-	public static DataItem item = null;
+	public static Inventory.Item item = null;
 	public static bool pokemonActive = false;
 
 	public static GameGUI gamegui = new GameGUI();
@@ -96,11 +96,10 @@ public class Player : MonoBehaviour {
 				}
 			}
 		}
-		
-		//The previous code here for party integrity, will be handled by the PokeParty class internally
-		
-		if (!trainer.inventory.Contains(item))			item = null;
-		if (item==null && trainer.inventory.Count>0)	item = trainer.inventory[0];
+
+		if (item != null && trainer.inventory.GetQuantity(item.id) == 0)			item = null;
+		var itemsCount = trainer.inventory.items.Count;
+		if (item==null && itemsCount>0)	item = trainer.inventory.items[itemsCount - 1];
 		
 		//throw pokemon
 		if (!click && Input.GetKey(KeyCode.Return)){

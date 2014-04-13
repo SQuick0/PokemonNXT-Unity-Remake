@@ -4,12 +4,13 @@ using System.Collections.Generic;
 
 public class Trainer : MonoBehaviour {
 	public PokeParty party;
-	public List<DataItem> inventory = new List<DataItem>();
+	public Inventory inventory;
 
 	Vector3 velocity = Vector3.zero;
 
 	void Start(){
 		party = new PokeParty(this);
+		inventory = new Inventory(this);
 
 		//kanto starters, why not
 		party.AddPokemon(new Pokemon(1, true));
@@ -18,18 +19,12 @@ public class Trainer : MonoBehaviour {
 		Pokedex.states [1] = Pokedex.State.Captured;
 		Pokedex.states [4] = Pokedex.State.Captured;
 		Pokedex.states [7] = Pokedex.State.Captured;
-
-		inventory.Add (new DataItem(ItemTypes.Pokeball, 5));
-		inventory.Add (new DataItem(ItemTypes.Potion, 2));
-		//inventory.Add(2, 1); //New inventory code references shared item data. (id, quantity)
-		//inventory.Add(5, 1);
+		
+		inventory.Add(1, 5); //New inventory code references shared item data. (id, quantity)
+		inventory.Add(4, 2);
 	}
 
 	void Update(){
-		//inventoryMGR
-		for(int i=0; i<inventory.Count; i++){
-			if (inventory[i].id<=0)	inventory.Remove(inventory[i]);
-		}
 	}
 
 	public void ThrowPokemon(Pokemon poke){
