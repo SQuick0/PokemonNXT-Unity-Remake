@@ -117,7 +117,7 @@ public class Player : MonoBehaviour {
 		}
 		
 		//activate menu
-		if (Input.GetKey(KeyCode.Escape) && !click){
+		if (Input.GetKeyDown(KeyCode.Escape) && !click){
 			if (pokemonActive)
 				pokemonActive = false;
 			else

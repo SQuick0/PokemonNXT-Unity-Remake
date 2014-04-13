@@ -7,7 +7,8 @@ using Items = System.Collections.Generic.List<Inventory.Item>;
 
 public class Inventory
 {
-	const int INVENTORY_MAX = 100;
+	const int ITEMS_MAX = 99; //Items in inventory
+	const int QUANTITY_MAX = 99; //Item stack
 
 	Trainer trainer;
 	public Items items; //Doing operations on items or pockets outside this class is considered hard-coding, public until use is exclusively internal
@@ -18,18 +19,46 @@ public class Inventory
 		items = new Items();
 	}
 
-	public void Add(int id, int quantity) {
-		var item = new Item(id, quantity);
-		items.Add(item);
+	public bool Add(int id, int quantity) {
+		return Add(GetItem(id), id, quantity);
 	}
 
-    public bool Use(int id, int quantity) {
+	public bool Add(Item item, int id, int quantity) {
+		if (item == null) {
+			if (!HasCapacity())
+				return false; //Inventory full
+			
+			items.Add(new Item(id, quantity));
+		} else {
+			if (!HasItemCapacity(id, quantity))
+				return false;
+			
+			item.quantity += quantity;
+		}
+		
+		return true;
+	}
+
+	public int AddGetRemainder(int id, int quantity) { //Adds an item and returns how many could not fit
+		var item = GetItem(id);
+		if (HasItemCapacity(item, quantity)) {
+			Add(id, quantity);
+			return 0;
+		}
+
+		var available = Math.Min(QUANTITY_MAX, item.quantity + quantity); //How much will fit
+		var remainder = QUANTITY_MAX - available; //How many won't fit
+
+		return remainder;
+	}
+
+    public bool Use(int id, int quantity = 1) {
 		var item = items[0];
 
 		if (quantity > item.quantity)
 			return false;
 
-		for(int i = 0; i < quantity; i++) { //Call the number of times specified
+		for(int i = 0; i < quantity; i++) { //Call the number of times used
 			item.Use();
 		}
 
@@ -40,18 +69,13 @@ public class Inventory
 
 
 	public bool Remove(int id, int quantity) {
-		var item = GetItem(id);
-		if (item.quantity <= quantity) {
-			return true;
-		}
-
-		return false;
+		return Remove(GetItem(id), quantity);
 	}
 
 	public bool Remove(Item item, int quantity) {
 		bool result = false;
 
-		if (item.quantity <= quantity) {
+		if (HasItemCapacity(item, quantity)) {
 			result = true;
 			item.quantity -= quantity;
 		}
@@ -62,7 +86,18 @@ public class Inventory
 		return result;
 	}
 
-	public Items GetItems() {
+	public Items GetItems() { //All items in inventory
+		return items;
+	}
+
+	public Items GetItems(ITEM_POCKET pocket) { //All items in specified pocket of inventory
+		var items = new Items();
+
+		foreach(var item in GetItems()) {
+			if (item.data.pocket == pocket)
+				this.items.Add(item);
+		}
+
 		return items;
 	}
 
@@ -81,6 +116,18 @@ public class Inventory
 			return item.quantity;
 
 		return 0;
+	}
+
+	public bool HasItemCapacity(int id, int quantity) {
+		return HasItemCapacity(GetItem(id), quantity);
+	}
+
+	public bool HasItemCapacity(Item item, int quantity) {
+		return ((item == null) ? quantity : item.quantity + quantity) <= QUANTITY_MAX;
+	}
+
+	public bool HasCapacity(int number = 1) { //Check if there's enough space in the inventory for another unique item
+		return items.Count + number <= ITEMS_MAX;
 	}
 
 	//Contains unique traits specific to the trainer's inventory
