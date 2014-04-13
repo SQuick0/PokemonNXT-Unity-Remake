@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class Trainer : MonoBehaviour {
 	public PokeParty party;
-	public List<Item> inventory = new List<Item>();
+	public List<DataItem> inventory = new List<DataItem>();
 
 	Vector3 velocity = Vector3.zero;
 
@@ -19,14 +19,16 @@ public class Trainer : MonoBehaviour {
 		Pokedex.states [4] = Pokedex.State.Captured;
 		Pokedex.states [7] = Pokedex.State.Captured;
 
-		inventory.Add (new Item(ItemTypes.Pokeball, 5));
-		inventory.Add (new Item(ItemTypes.Potion, 2));
+		inventory.Add (new DataItem(ItemTypes.Pokeball, 5));
+		inventory.Add (new DataItem(ItemTypes.Potion, 2));
+		//inventory.Add(2, 1); //New inventory code references shared item data. (id, quantity)
+		//inventory.Add(5, 1);
 	}
 
 	void Update(){
 		//inventoryMGR
 		for(int i=0; i<inventory.Count; i++){
-			if (inventory[i].number<=0)	inventory.Remove(inventory[i]);
+			if (inventory[i].id<=0)	inventory.Remove(inventory[i]);
 		}
 	}
 

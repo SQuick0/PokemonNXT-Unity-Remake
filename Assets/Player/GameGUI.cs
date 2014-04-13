@@ -254,7 +254,7 @@ public class GameGUI : MonoBehaviour {
 		float mx = Input.mousePosition.x;
 		float my = Screen.height-Input.mousePosition.y;
 		float ypos = 0;
-		foreach(Item item in Player.trainer.inventory){
+		foreach(var item in Player.trainer.inventory){
 			if (item==Player.item)	GUI.DrawTexture(new Rect(0,ypos+8,150,16), GUImgr.gradRight);
 			if (mx<100 && my>ypos && my<ypos+30){
 				GUI.DrawTexture(new Rect(0,ypos+8,150,16), GUImgr.gradRight);
@@ -264,8 +264,8 @@ public class GameGUI : MonoBehaviour {
 				}
 			}
 			GUI.DrawTexture(new Rect(0,ypos,32,32), item.icon);
-			if (item.number>1)
-				GUI.Label(new Rect(32,ypos+5,100,25), item.type.ToString()+" x"+item.number.ToString());
+			if (item.id>1)
+				GUI.Label(new Rect(32,ypos+5,100,25), item.type.ToString()+" x"+item.id.ToString());
 			else
 				GUI.Label(new Rect(32,ypos+5,100,25), item.type.ToString());
 			ypos+=30;
@@ -291,8 +291,8 @@ public class GameGUI : MonoBehaviour {
 					GUI.DrawTexture(new Rect(200+2*width/3,0,width/3,25), GUImgr.gradDown);
 					if (Input.GetMouseButton(0)	&& !Player.click){
 						Player.click = true;
-						Player.item.number--;
-						if (Player.item.number<=0){
+						Player.item.id--;
+						if (Player.item.id<=0){
 							Player.trainer.inventory.Remove(Player.item);
 							Player.item = null;
 							return;
@@ -307,7 +307,7 @@ public class GameGUI : MonoBehaviour {
 			
 			ypos += 25;
 			GUI.skin.label.alignment = TextAnchor.MiddleLeft;
-			GUI.Label(new Rect(200,ypos,width,50), Item.ItemDescription(Player.item.type));
+			GUI.Label(new Rect(200,ypos,width,50), DataItem.ItemDescription(Player.item.type));
 		}
 	}
 	

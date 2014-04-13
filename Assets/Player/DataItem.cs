@@ -1,20 +1,19 @@
-﻿using UnityEngine;
+﻿/*
+ * We don't really want to duplicate items for each trainer's inventory.
+ * Instead each each item in an inventory should reference the shared data.
+ * The Inventory will have then a instantiable class with unique information and a reference to this object. (quantity, etc)
+ */
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Item{
+public class DataItem : Data.BaseItem {
 	public ItemTypes type = ItemTypes.Pokeball;
-	public int number = 0;
 	public Texture2D icon;
 
-	public Item(ItemTypes type){
+	public DataItem(ItemTypes type, int id) : base(id){
 		this.type = type;
-		this.number = 1;
-		icon = (Texture2D)Resources.Load("Icons/"+type.ToString());
-	}
-	public Item(ItemTypes type, int number){
-		this.type = type;
-		this.number = number;
 		icon = (Texture2D)Resources.Load("Icons/"+type.ToString());
 	}
 
@@ -22,16 +21,16 @@ public class Item{
 		switch(type){
 		case ItemTypes.Pokeball:
 			//Pokeball.ThrowPokeBall(Player.This.gameObject);
-			number--;
+			id--;
 			return;
 		}
 	}
 
-	public static void CombineInventory(List<Item> inventory){
+	public static void CombineInventory(List<DataItem> inventory){
 		for(int i=0; i<inventory.Count; i++){
 			for(int j=i+1; j<inventory.Count; j++){
 				if (inventory[i].type==inventory[j].type){
-					inventory[i].number += inventory[j].number;
+					inventory[i].id += inventory[j].id;
 					inventory.Remove(inventory[j]);
 				}
 			}

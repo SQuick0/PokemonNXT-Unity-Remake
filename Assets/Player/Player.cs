@@ -8,7 +8,7 @@ public class Player : MonoBehaviour {
 
 	public static Trainer trainer = null;
 	public static Pokemon pokemon {get{return trainer.party.GetActivePokemon();} set{}}
-	public static Item item = null;
+	public static DataItem item = null;
 	public static bool pokemonActive = false;
 
 	public static GameGUI gamegui = new GameGUI();
