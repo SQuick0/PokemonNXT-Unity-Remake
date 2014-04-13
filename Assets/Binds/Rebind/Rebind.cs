@@ -41,7 +41,6 @@ public class Rebind : MonoBehaviour
 		ConfigFilePath = Application.dataPath + @"\Binds";
 		defaultBindsSerializer = new ConfigSerializer(ConfigFilePath + @"\DefaultBindings.txt");
 		keyBindsSerializer = new ConfigSerializer(ConfigFilePath + @"\KeyBindings.txt");
-		UnityEngine.Debug.Log("LOADED");
     }
 
     public static void CreateEntry(string actionName)

@@ -16,7 +16,8 @@ public class PokemonDomesticated : MonoBehaviour {
 	}
 
 	void Update(){
-		if (Player.pokemon.obj==pokemonObj && Player.pokemonActive)	return;
+		var pokemon = Player.trainer.party.GetActivePokemon();
+		if (Player.pokemon.obj==pokemonObj && pokemon != null)	return;
 
 		switch(currentOrder){
 		case Orders.Heel:{

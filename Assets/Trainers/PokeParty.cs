@@ -69,9 +69,12 @@ public class PokeParty
 			selected = -1;
 			return null;
 		}
-		
+
+		var slot = GetSlots()[index];
 		selected = index;
-		return GetSlots()[index];
+		Player.pokemon = slot.pokemon;  //Ideally trainer should be using a method for this
+		
+		return slot;
 	}
 	
 	public Slot SelectNext() {
@@ -95,6 +98,15 @@ public class PokeParty
 		Slot slot = slots[index1];
 		slots[index1] = slots[index2];
 		slots[index2] = slot;
+	}
+
+	public Pokemon GetPokemon(int id) {
+		foreach (var slot in slots) {
+			if (slot.pokemon.number == id)
+				return slot.pokemon;
+		}
+
+		return null;
 	}
 	
 	public class Slot {

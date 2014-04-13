@@ -71,23 +71,16 @@ public class Player : MonoBehaviour {
 		if (!click && !pokemonActive){
 			Pokemon oldPokemonSelection = pokemon;
 
-			for(int i = 1; i <= 10; i++) {
-				if (Rebind.GetInput("SELECT_POKE_PARTY_" + i))
-					pokemon = trainer.pokemon[i - 1];
+			for(int i = 1; i <= trainer.party.Count(); i++) {
+				if (Rebind.GetInputDown("SELECT_POKE_PARTY_" + i))
+					trainer.party.Select(i - 1);
 			}
 
-			if (Rebind.GetInput("SELECT_POKE_PREV")){
-				if (pokemon==trainer.pokemon[0])
-					pokemon = trainer.pokemon[trainer.pokemon.Count-1];
-				else
-					if (trainer.pokemon.Contains(pokemon))	pokemon = trainer.pokemon[trainer.pokemon.IndexOf(pokemon)-1];
-			}
-			if (Rebind.GetInput("SELECT_POKE_NEXT")){
-				if (pokemon==trainer.pokemon[trainer.pokemon.Count-1])
-					pokemon = trainer.pokemon[0];
-				else
-					if (trainer.pokemon.Contains(pokemon))	pokemon = trainer.pokemon[trainer.pokemon.IndexOf(pokemon)+1];
-			}
+			if (Rebind.GetInputDown("SELECT_POKE_PREV"))
+				trainer.party.SelectPrev();
+			else if (Rebind.GetInputDown("SELECT_POKE_NEXT"))
+				trainer.party.SelectNext();
+
 			if (oldPokemonSelection!=pokemon){
 				click = true;
 				if (oldPokemonSelection.obj!=null){
@@ -97,15 +90,14 @@ public class Player : MonoBehaviour {
 			}
 		}
 
-		if (!trainer.pokemon.Contains(pokemon))				pokemon = null;
-		if (pokemon==null && trainer.pokemon.Count>0)		pokemon = trainer.pokemon[0];
+		//The previous code here for party integrity, will be handled by the PokeParty class internally
 
 		if (!trainer.inventory.Contains(item))			item = null;
 		if (item==null && trainer.inventory.Count>0)	item = trainer.inventory[0];
 
 		//throw pokemon
 		if (!click && Input.GetKey(KeyCode.Return)){
-			if (pokemon.obj==null){
+			if (pokemon != null && pokemon.obj==null){
 				trainer.ThrowPokemon(pokemon);
 			}else{
 				if (pokemonActive){

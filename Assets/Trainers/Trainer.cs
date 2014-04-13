@@ -3,22 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Trainer : MonoBehaviour {
-	public List<Pokemon> pokemon = new List<Pokemon>();
+	public PokeParty party = new PokeParty();
 	public List<Item> inventory = new List<Item>();
 
 	Vector3 velocity = Vector3.zero;
 
 	void Start(){
 		//kanto starters, why not
-		pokemon.Add (new Pokemon (1, true));
-		pokemon.Add (new Pokemon (4, true));
-		pokemon.Add (new Pokemon (7, true));
+		party.AddPokemon(new Pokemon(1, true));
+		party.AddPokemon(new Pokemon(4, true));
+		party.AddPokemon(new Pokemon(7, true));
 		Pokedex.states [1] = Pokedex.State.Captured;
 		Pokedex.states [4] = Pokedex.State.Captured;
 		Pokedex.states [7] = Pokedex.State.Captured;
 
-		inventory.Add (new Item (ItemTypes.Pokeball, 5));
-		inventory.Add (new Item (ItemTypes.Potion, 2));
+		inventory.Add (new Item(ItemTypes.Pokeball, 5));
+		inventory.Add (new Item(ItemTypes.Potion, 2));
 	}
 
 	void Update(){
