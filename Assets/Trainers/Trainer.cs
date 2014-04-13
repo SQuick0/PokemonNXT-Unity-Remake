@@ -2,9 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Trainer : MonoBehaviour {
+public class Trainer : MonoBehaviour { //Need to separate the Unity object from this object, like Pokemon has. (Target)
 	public PokeParty party;
 	public Inventory inventory;
+	public Inventory.Item item {get{return inventory.selected;} set{}}
 
 	Vector3 velocity = Vector3.zero;
 
@@ -25,6 +26,10 @@ public class Trainer : MonoBehaviour {
 	}
 
 	void Update(){
+	}
+
+	public Target.TARGETS GetTargetType() {
+		return Target.TARGETS.TRAINER;
 	}
 
 	public void ThrowPokemon(Pokemon poke){

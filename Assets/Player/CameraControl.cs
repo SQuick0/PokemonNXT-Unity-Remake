@@ -12,13 +12,13 @@ public class CameraControl : MonoBehaviour {
 	Vector3 camPos = Vector3.zero;
 	float cameraZoom = 6;
 	public static bool releaseCursor = false;
-	Target activeTarget;
+	BattleTarget activeTarget;
 	//public GameGUI gamegui = new GameGUI();
 
 
 	void Start() {
 		//activeTarget = GetComponent<Target>();
-		gameObject.AddComponent ("Target");
+		gameObject.AddComponent ("BattleTarget");
 	}
 
 	void Update() {

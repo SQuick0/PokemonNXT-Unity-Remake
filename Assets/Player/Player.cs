@@ -8,7 +8,6 @@ public class Player : MonoBehaviour {
 
 	public static Trainer trainer = null;
 	public static Pokemon pokemon {get{return trainer.party.GetActivePokemon();} set{}}
-	public static Inventory.Item item = null;
 	public static bool pokemonActive = false;
 
 	public static GameGUI gamegui = new GameGUI();
@@ -96,10 +95,8 @@ public class Player : MonoBehaviour {
 				}
 			}
 		}
-
-		if (item != null && trainer.inventory.GetQuantity(item.id) == 0)			item = null;
+		
 		var itemsCount = trainer.inventory.items.Count;
-		if (item==null && itemsCount>0)	item = trainer.inventory.items[itemsCount - 1];
 		
 		//throw pokemon
 		if (!click && Input.GetKey(KeyCode.Return)){
