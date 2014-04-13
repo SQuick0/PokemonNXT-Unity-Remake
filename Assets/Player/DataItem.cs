@@ -32,4 +32,8 @@ public class DataItem : Data.BaseItem {
 	public void AddFlag(ITEM_FLAG_BINARY flag) {
 		SetFlags(flags | flag);
 	}
+
+	public bool HasFlag(ITEM_FLAG_BINARY flag) {
+		return (flags & flag) != 0;
+	}
 }
