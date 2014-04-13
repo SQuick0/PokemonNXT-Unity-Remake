@@ -7,7 +7,7 @@ public class Player : MonoBehaviour {
 	static bool jumpCool = true;
 
 	public static Trainer trainer = null;
-	public static Pokemon pokemon = null;
+	public static Pokemon pokemon {get{return trainer.party.GetActivePokemon();} set{}}
 	public static Item item = null;
 	public static bool pokemonActive = false;
 

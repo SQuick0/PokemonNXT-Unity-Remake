@@ -63,6 +63,14 @@ public class PokeParty
 
 		return true;
 	}
+
+	public void RemovePokemon(int index) {
+		var slot = GetSlot(index);
+		slots.RemoveAt(index);
+
+		if (selected == index) //If the current Pokemon was removed, select the previous. (If there are none left, it will set it correctly to -1)
+			Select(Count() - 1);
+	}
 	
 	public Slot Select(int index) {
 		if (index < 0 || index >= Count()) { //Check if it's an invalid slot
@@ -72,8 +80,7 @@ public class PokeParty
 
 		var slot = GetSlots()[index];
 		selected = index;
-		Player.pokemon = slot.pokemon;  //Ideally trainer should be using a method for this
-		
+
 		return slot;
 	}
 	
