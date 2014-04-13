@@ -5,11 +5,13 @@ using System;
 public class PokeParty
 {
 	const int PARTY_MAX = 10;
-	
+
+	Trainer trainer; //Enables it to be usable by any trainer in multiplayer (independant)
 	List<Slot> slots;
 	int selected;
 	
-	public PokeParty() {
+	public PokeParty(Trainer trainer) {
+		this.trainer = trainer;
 		slots = new List<Slot>();
 		Select(-1); //Assume the trainer has no pokemon
 	}

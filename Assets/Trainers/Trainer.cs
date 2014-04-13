@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Trainer : MonoBehaviour {
-	public PokeParty party = new PokeParty();
+	public PokeParty party;
 	public List<Item> inventory = new List<Item>();
 
 	Vector3 velocity = Vector3.zero;
 
 	void Start(){
+		party = new PokeParty(this);
+
 		//kanto starters, why not
 		party.AddPokemon(new Pokemon(1, true));
 		party.AddPokemon(new Pokemon(4, true));
