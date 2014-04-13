@@ -51,9 +51,7 @@ public class TrainerAI : MonoBehaviour {
 			GetComponent<Animator>().SetBool("run", true);
 		}else{
 			if (direct.sqrMagnitude>1)	transform.position += direct;
-			if (currentPokemon==null){
-				currentPokemon = trainer.pokemon[0];
-			}
+			currentPokemon = trainer.party.GetActivePokemon();
 
 			if (currentPokemon.obj!=null){
 				direct = currentPokemon.obj.transform.position-transform.position;
@@ -63,7 +61,7 @@ public class TrainerAI : MonoBehaviour {
 			direct.y = 0;
 			transform.rotation = Quaternion.LookRotation(direct);
 			GetComponent<Animator>().SetBool("run", false);
-			if (currentPokemon.obj==null)	trainer.ThrowPokemon(trainer.pokemon[0]);
+			if (currentPokemon.obj==null)	trainer.ThrowPokemon(trainer.party.GetSlot(0).pokemon); //Only 1 pokemon is throwable
 		}
 		
 		/*if (currentPokemonObj!=null){

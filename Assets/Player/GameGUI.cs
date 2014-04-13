@@ -21,6 +21,7 @@ public class GameGUI : MonoBehaviour {
 
 		float mx = Input.mousePosition.x;
 		float my = Screen.height-Input.mousePosition.y;
+		float ypos = 0;
 
 		if (Dialog.inDialog){
 			Dialog.GUIWindow();
@@ -40,7 +41,7 @@ public class GameGUI : MonoBehaviour {
 		
 		if (menuActive){
 			GUI.skin.label.alignment = TextAnchor.MiddleRight;
-			float ypos = 0;
+			ypos = 0;
 			GUI.DrawTexture(new Rect(Screen.width-100,0,150,Screen.height), GUImgr.gradLeft);
 			for(int i=0; i<8; i++){
 				if ((int)currentWindow==i && i>0)
@@ -83,18 +84,20 @@ public class GameGUI : MonoBehaviour {
 			}
 			return;
 		}
+		
+		ypos = 0;
+		var party = Player.trainer.party;
+		foreach(var slot in Player.trainer.party.GetSlots()){
+			var pokemon = slot.pokemon;
 
-		{
-		float ypos = 0;
-		foreach(Pokemon poke in Player.trainer.pokemon){
-			if (poke==Player.pokemon)
+			if (party.IsActive(pokemon))
 				GUI.DrawTexture(new Rect(0,ypos+16,100,32), GUImgr.gradRight);
-			GUI.DrawTexture(new Rect(0,ypos,64,64), poke.icon);
-			GUI.Label(new Rect(64,ypos,200,25), poke.name+" lvl"+poke.level.ToString());
-			GUImgr.DrawBar(new Rect(64,ypos+25,100,5), poke.hp, GUImgr.hp);
-			GUImgr.DrawBar(new Rect(64,ypos+35,100,5), poke.xp, GUImgr.xp);
+
+			GUI.DrawTexture(new Rect(0,ypos,64,64), pokemon.icon);
+			GUI.Label(new Rect(64,ypos,200,25), pokemon.name+" lvl"+pokemon.level.ToString());
+			GUImgr.DrawBar(new Rect(64,ypos+25,100,5), pokemon.hp, GUImgr.hp);
+			GUImgr.DrawBar(new Rect(64,ypos+35,100,5), pokemon.xp, GUImgr.xp);
 			ypos += 70;
-		}
 		}
 	}
 	
@@ -188,26 +191,33 @@ public class GameGUI : MonoBehaviour {
 	}
 	
 	void PokemonWindow(){
+		var party = Player.trainer.party;
 		float mx = Input.mousePosition.x;
 		float my = Screen.height-Input.mousePosition.y;
-		{
-			float xpos = Screen.width/2 - Player.trainer.pokemon.Count*64/2;
-			foreach(Pokemon poke in Player.trainer.pokemon){
-				if (poke==Player.pokemon)	GUI.DrawTexture(new Rect(xpos+16,0,32,50), GUImgr.gradDown);
-				if (my<64 && mx>xpos && mx<xpos+64){
-					GUI.DrawTexture(new Rect(xpos+16,0,32,50), GUImgr.gradDown);
-					if (Input.GetMouseButton(0) && !Player.click){
-						Player.click = true;
-						if (Player.pokemon.obj!=null){
-							Player.pokemon.obj.Return();
-							Player.trainer.ThrowPokemon(poke);
-						}
-						Player.pokemon = poke;
+		float xpos = Screen.width/2 - party.Count()*64/2;
+		Pokemon pokemon;
+		
+		foreach(var slot in party.GetSlots()){
+			pokemon = slot.pokemon;
+			
+			if (party.IsActive(pokemon))
+				GUI.DrawTexture(new Rect(xpos+16,0,32,50), GUImgr.gradDown);
+			
+			if (my<64 && mx>xpos && mx<xpos+64){
+				GUI.DrawTexture(new Rect(xpos+16,0,32,50), GUImgr.gradDown);
+				if (Input.GetMouseButton(0) && !Player.click){
+					Player.click = true;
+					party.Select(slot.index);
+					if (Player.pokemon.obj!=null){
+						Player.pokemon.obj.GetComponent<PokemonObj>().Return();
+						Player.trainer.ThrowPokemon(pokemon);
 					}
 				}
-				GUI.DrawTexture(new Rect(xpos,0,64,64), poke.icon);
-				xpos+=64;
-			}}
+			}
+			
+			GUI.DrawTexture(new Rect(xpos,0,64,64), pokemon.icon);
+			xpos+=64;
+		}
 		
 		if (Player.pokemon!=null){
 			Pokemon poke = Player.pokemon;
@@ -234,7 +244,7 @@ public class GameGUI : MonoBehaviour {
 
 			ypos+=20;
 			if (poke.heldItem!=null){
-				GUI.Label(new Rect(20, ypos, 200,25), poke.heldItem.type.ToString());
+				GUI.Label(new Rect(20, ypos, 200,25), poke.heldItem.data.name);
 			}
 		}
 	}
@@ -244,8 +254,8 @@ public class GameGUI : MonoBehaviour {
 		float mx = Input.mousePosition.x;
 		float my = Screen.height-Input.mousePosition.y;
 		float ypos = 0;
-		foreach(Item item in Player.trainer.inventory){
-			if (item==Player.item)	GUI.DrawTexture(new Rect(0,ypos+8,150,16), GUImgr.gradRight);
+		foreach(var item in Player.trainer.inventory.GetItems()){
+			if (item.id == Player.item.id)	GUI.DrawTexture(new Rect(0,ypos+8,150,16), GUImgr.gradRight);
 			if (mx<100 && my>ypos && my<ypos+30){
 				GUI.DrawTexture(new Rect(0,ypos+8,150,16), GUImgr.gradRight);
 				if (Input.GetMouseButton(0) && !Player.click){
@@ -253,14 +263,14 @@ public class GameGUI : MonoBehaviour {
 					Player.item = item;
 				}
 			}
-			GUI.DrawTexture(new Rect(0,ypos,32,32), item.icon);
-			if (item.number>1)
-				GUI.Label(new Rect(32,ypos+5,100,25), item.type.ToString()+" x"+item.number.ToString());
+			GUI.DrawTexture(new Rect(0,ypos,32,32), item.data.icon);
+			if (item.id>1)
+				GUI.Label(new Rect(32,ypos+5,100,25), item.data.name+" x"+item.id.ToString());
 			else
-				GUI.Label(new Rect(32,ypos+5,100,25), item.type.ToString());
+				GUI.Label(new Rect(32,ypos+5,100,25), item.data.name);
 			ypos+=30;
 		}
-		
+
 		if (Player.item!=null){
 			ypos = 0;
 			float width = Screen.width-400;
@@ -271,19 +281,21 @@ public class GameGUI : MonoBehaviour {
 					GUI.DrawTexture(new Rect(200,0,width/3,25), GUImgr.gradDown);
 					if (Input.GetMouseButton(0)	&& !Player.click){
 						Player.click = true;
-						Player.item.Use();
+						Player.trainer.inventory.Use(Player.item.id, 1);
 					}
 				}
 				if (mx>200+width/3 && mx<200+2*width/3){
 					GUI.DrawTexture(new Rect(200+width/3,0,width/3,25), GUImgr.gradDown);
 				}
+
+				//Is this drop? Too much hardcoding
 				if (mx>200+2*width/3 && mx<200+width){
 					GUI.DrawTexture(new Rect(200+2*width/3,0,width/3,25), GUImgr.gradDown);
 					if (Input.GetMouseButton(0)	&& !Player.click){
 						Player.click = true;
-						Player.item.number--;
-						if (Player.item.number<=0){
-							Player.trainer.inventory.Remove(Player.item);
+						Player.item.id--;
+						if (Player.item.id<=0){
+							Player.trainer.inventory.Remove(Player.item.id, 1);
 							Player.item = null;
 							return;
 						}
@@ -297,7 +309,7 @@ public class GameGUI : MonoBehaviour {
 			
 			ypos += 25;
 			GUI.skin.label.alignment = TextAnchor.MiddleLeft;
-			GUI.Label(new Rect(200,ypos,width,50), Item.ItemDescription(Player.item.type));
+			GUI.Label(new Rect(200,ypos,width,50),Player.item.data.description);
 		}
 	}
 	

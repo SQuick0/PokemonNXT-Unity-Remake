@@ -19,7 +19,7 @@ public class Pokemon{
 	public float attack = 10;
 	public float defence = 10;
 	public float speed = 10;
-	public Item heldItem = null;
+	public Inventory.Item heldItem = null;
 	
 	public Pokemon(int number, bool isPlayer){
 		this.number = number;

@@ -92,7 +92,7 @@ public class Pokeball : MonoBehaviour {
 				//printme = printme + "\n Okay!";
 				printme = "You've captured a " + targetPokemon.pokemon.GetName() + "!";
 				targetPokemon.Return();
-				Player.trainer.pokemon.Add(new Pokemon(targetPokemon.pokemon.number,true));
+				Player.trainer.party.AddPokemon(new Pokemon(targetPokemon.pokemon.number,true));
 			}
 			else {
 				//printme = printme + "\n It's too strong!";

@@ -3,29 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Trainer : MonoBehaviour {
-	public List<Pokemon> pokemon = new List<Pokemon>();
-	public List<Item> inventory = new List<Item>();
+	public PokeParty party;
+	public Inventory inventory;
 
 	Vector3 velocity = Vector3.zero;
 
 	void Start(){
+		party = new PokeParty(this);
+		inventory = new Inventory(this);
+
 		//kanto starters, why not
-		pokemon.Add (new Pokemon (1, true));
-		pokemon.Add (new Pokemon (4, true));
-		pokemon.Add (new Pokemon (7, true));
+		party.AddPokemon(new Pokemon(1, true));
+		party.AddPokemon(new Pokemon(4, true));
+		party.AddPokemon(new Pokemon(7, true));
 		Pokedex.states [1] = Pokedex.State.Captured;
 		Pokedex.states [4] = Pokedex.State.Captured;
 		Pokedex.states [7] = Pokedex.State.Captured;
-
-		inventory.Add (new Item (ItemTypes.Pokeball, 5));
-		inventory.Add (new Item (ItemTypes.Potion, 2));
+		
+		inventory.Add(1, 5); //New inventory code references shared item data. (id, quantity)
+		inventory.Add(4, 2);
 	}
 
 	void Update(){
-		//inventoryMGR
-		for(int i=0; i<inventory.Count; i++){
-			if (inventory[i].number<=0)	inventory.Remove(inventory[i]);
-		}
 	}
 
 	public void ThrowPokemon(Pokemon poke){
