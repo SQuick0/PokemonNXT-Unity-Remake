@@ -37,50 +37,57 @@ public class Player : MonoBehaviour {
 		}
 
 		//player control
+		click = CanClick();
 		if (pokemonActive && pokemon.obj!=null){
-			//move pokemon
-			trainer.SetVelocity(Vector3.zero);
-
-			Vector3 velocity = Vector3.zero;
-			velocity += pokemon.obj.transform.forward * Input.GetAxis("Vertical");
-			velocity += pokemon.obj.transform.right * Input.GetAxis("Horizontal");
-			velocity *= pokemon.obj.speed;
-
-			pokemon.obj.SetVelocity(velocity);
-			pokemon.obj.transform.Rotate(pokemon.obj.transform.up, Input.GetAxis("Mouse X"));
-			
-			if(Input.GetButton("Jump") && jumpCool && Physics.Raycast(pokemon.obj.transform.position+Vector3.up*0.1f, Vector3.down, 0.2f)){
-				pokemon.obj.rigidbody.AddForce(Vector3.up*3000);
-				jumpCool = false;
-			}
-			if(!Input.GetButton("Jump"))	jumpCool = true;
-			
-			pokemon.pp -= Time.deltaTime/500;
-			if (pokemon.pp<=0){
-				pokemonActive = false;
-				pokemon.obj.Return();
-			}
-
+			HandlePokemon();
 		}else{
+			HandleTrainer();
 			//move trainer
 			Vector3 vel = Quaternion.Euler(0,CameraControl.ay,0) * (Vector3.forward*Input.GetAxis("Vertical") + Vector3.right*Input.GetAxis("Horizontal"));
 			trainer.SetVelocity(vel);
 		}
+	}
 
+	public void HandlePokemon() {
+		//move pokemon
+		trainer.SetVelocity(Vector3.zero);
+		
+		Vector3 velocity = Vector3.zero;
+		velocity += pokemon.obj.transform.forward * Input.GetAxis("Vertical");
+		velocity += pokemon.obj.transform.right * Input.GetAxis("Horizontal");
+		velocity *= pokemon.obj.speed;
+		
+		pokemon.obj.SetVelocity(velocity);
+		pokemon.obj.transform.Rotate(pokemon.obj.transform.up, Input.GetAxis("Mouse X"));
+		
+		if(Input.GetButton("Jump") && jumpCool && Physics.Raycast(pokemon.obj.transform.position+Vector3.up*0.1f, Vector3.down, 0.2f)){
+			pokemon.obj.rigidbody.AddForce(Vector3.up*3000);
+			jumpCool = false;
+		}
+		if(!Input.GetButton("Jump"))	jumpCool = true;
+		
+		pokemon.pp -= Time.deltaTime/500;
+		if (pokemon.pp<=0){
+			pokemonActive = false;
+			pokemon.obj.Return();
+		}
+	}
+
+	public void HandleTrainer() {
 		//swap pokemon
 		if (!click && !pokemonActive){
 			Pokemon oldPokemonSelection = pokemon;
-
+			
 			for(int i = 1; i <= trainer.party.Count(); i++) {
 				if (Rebind.GetInputDown("SELECT_POKE_PARTY_" + i))
 					trainer.party.Select(i - 1);
 			}
-
+			
 			if (Rebind.GetInputDown("SELECT_POKE_PREV"))
 				trainer.party.SelectPrev();
 			else if (Rebind.GetInputDown("SELECT_POKE_NEXT"))
 				trainer.party.SelectNext();
-
+			
 			if (oldPokemonSelection!=pokemon){
 				click = true;
 				if (oldPokemonSelection.obj!=null){
@@ -89,12 +96,12 @@ public class Player : MonoBehaviour {
 				}
 			}
 		}
-
+		
 		//The previous code here for party integrity, will be handled by the PokeParty class internally
-
+		
 		if (!trainer.inventory.Contains(item))			item = null;
 		if (item==null && trainer.inventory.Count>0)	item = trainer.inventory[0];
-
+		
 		//throw pokemon
 		if (!click && Input.GetKey(KeyCode.Return)){
 			if (pokemon != null && pokemon.obj==null){
@@ -109,7 +116,7 @@ public class Player : MonoBehaviour {
 			}
 			click = true;
 		}
-
+		
 		//activate menu
 		if (Input.GetKey(KeyCode.Escape) && !click){
 			if (pokemonActive)
@@ -118,7 +125,7 @@ public class Player : MonoBehaviour {
 				GameGUI.menuActive = !GameGUI.menuActive;
 			click = true;
 		}
-
+		
 		//capture pokemon
 		if(Input.GetKeyDown("c")) {
 			GameGUI gamegui = GetComponent<GameGUI>();
@@ -135,11 +142,11 @@ public class Player : MonoBehaviour {
 			
 			click = true;
 		}
-
+		
 		if (Input.GetKeyDown ("h")) {
 			PokeCenter.HealPokemon ();
 		}
-	/*
+		/*
 	 * don't try using this right now, because it doesn't exist!
 		if (Input.GetKeyDown ("k")) {
 			Populate okasf = new Populate();
@@ -150,13 +157,20 @@ public class Player : MonoBehaviour {
 		bool anti = false;
 		for(int i = 1; i <= 10 && !anti; i++) {
 			if (Rebind.GetInput("SELECT_POKE_PARTY_" + i))
-			  anti = true;
+				anti = true;
 		}
-		
-		if (!anti && !Rebind.GetInput("SELECT_POKE_PREV") && !Rebind.GetInput("SELECT_POKE_NEXT")
-		    && !Rebind.GetInput("THROW_POKEBALL") && !Input.GetKey(KeyCode.Escape)
-		    && !Input.GetMouseButton(0) && !Input.GetMouseButton(1))
-			click = false;
+	}
+
+	public static bool CanClick() {
+		bool anti = false;
+		for(int i = 1; i <= 10 && !anti; i++) {
+			if (Rebind.GetInput("SELECT_POKE_PARTY_" + i))
+				anti = true;
+		}
+
+		return (!anti && !Rebind.GetInput("SELECT_POKE_PREV") && !Rebind.GetInput("SELECT_POKE_NEXT")
+		    	&& !Rebind.GetInput("THROW_POKEBALL") && !Input.GetKey(KeyCode.Escape)
+		        && !Input.GetMouseButton(0) && !Input.GetMouseButton(1));
 	}
 
 	public static void CapturePokemon(){
