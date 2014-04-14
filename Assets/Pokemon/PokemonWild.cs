@@ -8,6 +8,7 @@ public class PokemonWild : MonoBehaviour {
 	void Start(){
 		target = transform.position;
 		pokemonObj = GetComponent<PokemonObj>();
+		pokemonObj.isWild = true;
 	}
 
 	void Update(){
