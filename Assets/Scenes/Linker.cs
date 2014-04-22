@@ -5,7 +5,7 @@ public class Linker : MonoBehaviour {
 	public string zone = "";
 
 	void OnTriggerEnter (Collider col) {
-		if (col.gameObject==Player.trainer.gameObject){
+		if (col.gameObject==Player.trainer.obj){
 			Application.LoadLevel(zone);
 		}
 	}

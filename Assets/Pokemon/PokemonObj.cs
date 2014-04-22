@@ -36,7 +36,6 @@ public class PokemonObj : MonoBehaviour {
 	public void Return(){
 		if (returning)	return;
 		if (Player.pokemon == pokemon) {
-			Player.pokemonActive = false;
 			//gamegui.SetChatWindow(gameObject.GetComponent<Pokeball>().pokemon.GetName() + "! Return!");
 			//gamegui.SetChatWindow(Player.pokemonObj.GetComponent<Pokeball>().pokemon.GetName() + "! Return!");
 			gamegui.SetChatWindow(pokemon.GetName() + "! Return!");

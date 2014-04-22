@@ -1,8 +1,12 @@
-﻿using UnityEngine;
+﻿/*
+ * Remember to re-write this class once the database is in.
+ */
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Pokemon{
+public class Pokemon : Target {
 	public bool thrown = false;
 	public PokemonObj obj = null;
 	public int number = 0;
@@ -20,13 +24,17 @@ public class Pokemon{
 	public float defence = 10;
 	public float speed = 10;
 	public Inventory.Item heldItem = null;
+
+	public Trainer trainer;
 	
-	public Pokemon(int number, bool isPlayer){
+	public Pokemon(int number, Trainer trainer = null, bool isPlayer = false, int level = 5){
 		this.number = number;
+		this.trainer = trainer;
 		this.isPlayer = isPlayer;
+
 		name = GetName(number);
 		icon = GetIcon(number);
-		level = 5;
+		this.level = level;
 		
 		hp = 1;
 		attack = TotalAttack();
@@ -36,18 +44,13 @@ public class Pokemon{
 		xp = Random.value;
 		PopulateMoves();
 	}
-	
-	public Pokemon(int number, bool isPlayer, int level){
-		Debug.Log("New "+GetName(number));
-		this.number = number;
-		this.isPlayer = isPlayer;
-		name = GetName(number);
-		icon = GetIcon(number);
-		this.level = level;
-		
-		hp = 1;
-		pp = 1;
-		PopulateMoves();
+
+	public override Target.TARGETS GetTargetType() {
+		return Target.TARGETS.POKEMON;
+	}
+
+	public bool IsActive() {
+		return (trainer != null) ? trainer.party.GetActivePokemon() == this : false;
 	}
 	
 	public void Damage(Pokemon otherPoke, Move move){
@@ -164,7 +167,6 @@ public class Pokemon{
 	}
 	public static int GetNumber(string name){
 		name = name.ToLower();
-		Debug.Log(name);
 		switch(name){
 		case "bulbasaur":	return 1;
 		case "charmander":	return 4;
