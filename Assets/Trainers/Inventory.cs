@@ -1,24 +1,3 @@
-/*
- * Inventory
- * Each trainer has their own independant inventory.
- * 
- * Common Function List:
- * Add(id, quantity)                :bool          Add an item to the inventory, it will combine with any existing    :Whether there was enough capacity for the item.
- * AddGetRemainder(id, quantity)    :int           Adds an item and if it doesn't fit, it'll fit as many as it can    :Returns the quantity left over.				
- * Use(id, quantity, target)        :bool          Runs the events for using an item. Targets are: Trainer/Pokemon    :Whether it had another items to use and that it succeeded.
- * Remove(id, quantity)             :bool          Removes a certain amount of items from the inventory.              :Whether it has enough items to remove.
- * GetItems(ITEM_POCKET)            :List<Item>    Gets a list of items in a specific pocket category.                :List of items in pocket.
- * GetItems()                       :List<Item>    Gets all items in inventory.                                       :List of all items.
- * GetItem(id)                      :Item          Gets the Inventory.Item inventory instance for that id.            :Item instance.
- * GetQuantity(id)                  :int           Gets the quantity of an item.                                      :Quantity of item.
- * HasItem(id)  					:int           Has an item of that id in inventory.                               :Has item success.
- * HasItemCapacity(id, quantity) 	:int           Has enough room for additional quantities of a certain item.       :Can fit a specified amount more of an item.
- * HasCapacity() 					:bool          Has enough room for a new unique item.                             :Can fit another kind of item in inventory.
- * Select(id) 						:void          Select active item, could be used to hold 2D items visibly.        :N/A
- * Transfer(ref Item) 				:void          Transfer an item into the inventory, from an Item instance.        :Will set Item reference to null if no quantity is left
- * Transfer(Inventory)              :void          Transfer all abled items from another inventory into this one.     :N/A
- */
-
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -108,12 +87,8 @@ public class Inventory
 			item.quantity -= quantity;
 		}
 		
-		if (item.quantity == 0) { //If none are left in inventory, remove item from inventory
-			if (trainer.item.id == item.id) //If the currently selected item has been entirely used up, switch to another
-				selected = items[0];
-
+		if (item.quantity == 0) //If none are left in inventory, remove item from inventory
 			items.Remove(item);
-		}
 
 		return result;
 	}
@@ -189,10 +164,6 @@ public class Inventory
 				ritem = null; //Garbage collector will free
 			}
 		}
-	}
-
-	public void Transfer(Inventory other) {
-		other.GetItems().RemoveAll(item => {Transfer(ref item); return item == null;});
 	}
 
 	//Contains unique traits specific to the trainer's inventory

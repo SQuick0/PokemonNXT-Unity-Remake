@@ -6,20 +6,18 @@ public class Player : MonoBehaviour {
 	public static bool click = false;
 	static bool jumpCool = true;
 
-	public static TrainerPlayer trainer = null;
+	public static Trainer trainer = null;
 	public static Pokemon pokemon {get{return trainer.party.GetActivePokemon();} set{}}
+	public static bool pokemonActive = false;
 
 	public static GameGUI gamegui = new GameGUI();
 
 	void Start(){
-		//trainer = GameObject.Find("Player").GetComponent<Trainer>(); //Previously both the Unity Trainer object and the trainer class were combined
-		//trainer = new TrainerPlayer();
+		trainer = GameObject.Find("Player").GetComponent<Trainer>();
 		gameObject.AddComponent ("CameraControl");
 	}
 
 	void Update(){
-		var party = trainer.party;
-
 		//do nothing if in dialog
 		if (Dialog.inDialog){
 			Screen.lockCursor = false;
@@ -29,7 +27,7 @@ public class Player : MonoBehaviour {
 		}
 
 		//menu
-		if ((GameGUI.menuActive && !party.HasActive()) || CameraControl.releaseCursor) {
+		if ((GameGUI.menuActive && !pokemonActive) || CameraControl.releaseCursor) {
 			Screen.lockCursor = false;
 			Screen.showCursor = true;
 		} else {
@@ -39,9 +37,9 @@ public class Player : MonoBehaviour {
 
 		//player control
 		click = CanClick();
-		if (party.HasActive()) {
+		if (pokemonActive && pokemon.obj!=null){
 			HandlePokemon();
-		} else {
+		}else{
 			HandleTrainer();
 			//move trainer
 			Vector3 vel = Quaternion.Euler(0,CameraControl.ay,0) * (Vector3.forward*Input.GetAxis("Vertical") + Vector3.right*Input.GetAxis("Horizontal"));
@@ -68,22 +66,17 @@ public class Player : MonoBehaviour {
 		if(!Input.GetButton("Jump"))	jumpCool = true;
 		
 		pokemon.pp -= Time.deltaTime/500;
-		if (pokemon.pp <= 0){
+		if (pokemon.pp<=0){
+			pokemonActive = false;
 			pokemon.obj.Return();
-		}
-
-		//throw pokemon
-		if (!click && Input.GetKeyDown(KeyCode.Return)){
-			trainer.RecallPokemon();
-			click = true;
 		}
 	}
 
 	public void HandleTrainer() {
-		var party = trainer.party;
-
-		//select pokemon
-		if (!click && !trainer.party.HasActive()){
+		//swap pokemon
+		if (!click && !pokemonActive){
+			Pokemon oldPokemonSelection = pokemon;
+			
 			for(int i = 1; i <= trainer.party.Count(); i++) {
 				if (Rebind.GetInputDown("SELECT_POKE_PARTY_" + i))
 					trainer.party.Select(i - 1);
@@ -93,19 +86,39 @@ public class Player : MonoBehaviour {
 				trainer.party.SelectPrev();
 			else if (Rebind.GetInputDown("SELECT_POKE_NEXT"))
 				trainer.party.SelectNext();
+			
+			if (oldPokemonSelection!=pokemon){
+				click = true;
+				if (oldPokemonSelection.obj!=null){
+					oldPokemonSelection.obj.Return();
+					trainer.ThrowPokemon(pokemon);
+				}
+			}
 		}
-
+		
+		var itemsCount = trainer.inventory.items.Count;
+		
 		//throw pokemon
-		if (!click && Input.GetKeyDown(KeyCode.Return)){
-			trainer.ThrowPokeball();
+		if (!click && Input.GetKey(KeyCode.Return)){
+			if (pokemon != null && pokemon.obj==null){
+				trainer.ThrowPokemon(pokemon);
+			}else{
+				if (pokemonActive){
+					pokemon.obj.Return();
+					pokemonActive = false;
+				}else{
+					pokemonActive = true;
+				}
+			}
 			click = true;
 		}
 		
 		//activate menu
 		if (Input.GetKeyDown(KeyCode.Escape) && !click){
-			if (!party.HasActive())
+			if (pokemonActive)
+				pokemonActive = false;
+			else
 				GameGUI.menuActive = !GameGUI.menuActive;
-
 			click = true;
 		}
 		

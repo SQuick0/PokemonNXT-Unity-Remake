@@ -17,7 +17,6 @@ public class MenuScene : MonoBehaviour {
 		startTime += Time.deltaTime;
 		if (!GameObject.Find("MusicBox").audio.isPlaying){
 			GameObject.Find("MusicBox").audio.Play();
-			DontDestroyOnLoad(GameObject.Find("MusicBox"));
 		}
 		if (!Input.GetMouseButton(0))	click = false;
 

@@ -4,8 +4,11 @@ using System.Collections.Generic;
 
 public class CameraControl : MonoBehaviour {
 	public static Vector3 cameraFocus = Vector3.zero;
+	Pokemon pokemon = null;
+	bool pokemonActive = false;
 	public static float ax = 0;
 	public static float ay = 0;
+	Trainer trainer = null;
 	Vector3 camPos = Vector3.zero;
 	float cameraZoom = 6;
 	public static bool releaseCursor = false;
@@ -56,10 +59,9 @@ public class CameraControl : MonoBehaviour {
 	}
 
 	void LateUpdate(){
-		var pokemon = Player.pokemon;
-		var trainer = Player.trainer;
-		var hasActive = trainer.party.HasActive();
-
+		pokemon = Player.pokemon;
+		pokemonActive = Player.pokemonActive;
+		trainer = Player.trainer;
 		Quaternion camRot = transform.rotation;
 
 		if (Dialog.NPCobj=null){
@@ -67,7 +69,7 @@ public class CameraControl : MonoBehaviour {
 			Vector3 camFocus = Dialog.NPCobj.transform.position+Vector3.up;
 			transform.rotation = Quaternion.LookRotation(transform.position-camFocus);
 		}else{
-			if (hasActive && !releaseCursor) {
+			if (pokemon!=null && pokemonActive && !releaseCursor) {
 				//focus on current pokemon
 				cameraFocus = pokemon.obj.transform.position + Vector3.up;
 				transform.rotation = pokemon.obj.transform.rotation * Quaternion.Euler(ax,0,0);
@@ -78,7 +80,7 @@ public class CameraControl : MonoBehaviour {
 			}
 			else{
 				//focus on player
-				cameraFocus = trainer.obj.transform.position+Vector3.up*2;
+				cameraFocus = trainer.transform.position+Vector3.up*2;
 				Camera.main.transform.rotation = Quaternion.Euler(ax,ay,0);
 			}
 		}

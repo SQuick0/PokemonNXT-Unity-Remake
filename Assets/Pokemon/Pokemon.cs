@@ -24,17 +24,13 @@ public class Pokemon : Target {
 	public float defence = 10;
 	public float speed = 10;
 	public Inventory.Item heldItem = null;
-
-	public Trainer trainer;
 	
-	public Pokemon(int number, Trainer trainer = null, bool isPlayer = false, int level = 5){
+	public Pokemon(int number, bool isPlayer){
 		this.number = number;
-		this.trainer = trainer;
 		this.isPlayer = isPlayer;
-
 		name = GetName(number);
 		icon = GetIcon(number);
-		this.level = level;
+		level = 5;
 		
 		hp = 1;
 		attack = TotalAttack();
@@ -44,13 +40,22 @@ public class Pokemon : Target {
 		xp = Random.value;
 		PopulateMoves();
 	}
+	
+	public Pokemon(int number, bool isPlayer, int level){
+		Debug.Log("New "+GetName(number));
+		this.number = number;
+		this.isPlayer = isPlayer;
+		name = GetName(number);
+		icon = GetIcon(number);
+		this.level = level;
+		
+		hp = 1;
+		pp = 1;
+		PopulateMoves();
+	}
 
 	public override Target.TARGETS GetTargetType() {
 		return Target.TARGETS.POKEMON;
-	}
-
-	public bool IsActive() {
-		return (trainer != null) ? trainer.party.GetActivePokemon() == this : false;
 	}
 	
 	public void Damage(Pokemon otherPoke, Move move){
@@ -167,6 +172,7 @@ public class Pokemon : Target {
 	}
 	public static int GetNumber(string name){
 		name = name.ToLower();
+		Debug.Log(name);
 		switch(name){
 		case "bulbasaur":	return 1;
 		case "charmander":	return 4;

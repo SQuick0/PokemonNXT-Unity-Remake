@@ -5,6 +5,7 @@ public class PokemonObj : MonoBehaviour {
 	public float speed = 5;
 	public Pokemon pokemon = null;
 	public PokemonObj enemy = null;
+	public bool	isWild = false;
 	
 	Vector3 velocity = Vector3.zero;
 	bool returning = false;
@@ -36,6 +37,7 @@ public class PokemonObj : MonoBehaviour {
 	public void Return(){
 		if (returning)	return;
 		if (Player.pokemon == pokemon) {
+			Player.pokemonActive = false;
 			//gamegui.SetChatWindow(gameObject.GetComponent<Pokeball>().pokemon.GetName() + "! Return!");
 			//gamegui.SetChatWindow(Player.pokemonObj.GetComponent<Pokeball>().pokemon.GetName() + "! Return!");
 			gamegui.SetChatWindow(pokemon.GetName() + "! Return!");
@@ -58,109 +60,74 @@ public class PokemonObj : MonoBehaviour {
 			attackChat = "Enemy ";
 		}
 		attackChat += pokemon.name + " used " + move.moveType + "!";
+
 		switch(move.moveType){
 			
 		case MoveNames.Growl:{
 			if (move.cooldown<1)	return false;
 			const float range = 10;
-			RaycastHit[] hits = Physics.SphereCastAll(transform.position+Vector3.up, 1, direction ,range, 1<<10);
-			foreach(RaycastHit hit in hits){
-				if (hit.collider.gameObject!=gameObject){
-					PokemonObj enemyObj = hit.collider.GetComponent<PokemonObj>();
-					
-					if ((enemyObj.transform.position-transform.position).sqrMagnitude<range*range){
-						GameObject newEffect = (GameObject)Instantiate(Resources.Load("Effects/Debuff"));
-						newEffect.transform.position = enemyObj.transform.position+Vector3.up*0.2f;
-						newEffect.transform.parent = enemyObj.transform;
-					}
-					
-					if (enemyObj){
-						if (enemyObj.pokemon!=null)	enemyObj.pokemon.DeBuff(pokemon,move);
-						enemy = enemyObj;
-						enemyObj.enemy = this;
-					}
-				}
-			}
+			Attack("Effects/Debuff", false, range, direction, move);
 			audio.PlayOneShot((AudioClip)Resources.Load("Audio/Growl"));
-			move.cooldown = 0;
-			pokemon.pp-=move.GetPPCost();
 			return true;}
 			
 		case MoveNames.TailWhip:{
 			if (move.cooldown<1)	return false;
 			const float range = 10;
-			RaycastHit[] hits = Physics.SphereCastAll(transform.position+Vector3.up, 1, direction ,range, 1<<10);
-			foreach(RaycastHit hit in hits){
-				if (hit.collider.gameObject!=gameObject){
-					PokemonObj enemyObj = hit.collider.GetComponent<PokemonObj>();
-					
-					if ((enemyObj.transform.position-transform.position).sqrMagnitude<range*range){
-						GameObject newEffect = (GameObject)Instantiate(Resources.Load("Effects/Debuff"));
-						newEffect.transform.position = enemyObj.transform.position+Vector3.up*0.2f;
-						newEffect.transform.parent = enemyObj.transform;
-					}
-					
-					if (enemyObj){
-						if (enemyObj.pokemon!=null)	enemyObj.pokemon.DeBuff(pokemon,move);
-						enemy = enemyObj;
-						enemyObj.enemy = this;
-					}
-				}
-			}
-			
-			
-			
-			move.cooldown = 0;
-			pokemon.pp-=move.GetPPCost();
+			Attack("Effects/Debuff", false, range, direction, move);
 			return true;}
 			
 		case MoveNames.Tackle:{
 			if (move.cooldown<1)	return false;
 			const float range = 2;
-			RaycastHit[] hits = Physics.SphereCastAll(transform.position+Vector3.up, 1, direction ,range, 1<<10);
-			foreach(RaycastHit hit in hits){
-				if (hit.collider.gameObject!=gameObject){
-					PokemonObj enemyObj = hit.collider.GetComponent<PokemonObj>();
-					GameObject newEffect = (GameObject)Instantiate(Resources.Load("Effects/Bash"));
-					newEffect.transform.position = hit.point;
-					if (enemyObj){
-						if (enemyObj.pokemon!=null)	enemyObj.pokemon.Damage(pokemon,move);
-						enemy = enemyObj;
-						enemyObj.enemy = this;
-					}
-				}
-			}
+			Attack("Effects/Bash", true, range, direction, move);
 			rigidbody.AddForce(direction*range*rigidbody.mass*500);
-			move.cooldown = 0;
-			pokemon.pp-=move.GetPPCost();
 			return true;}
 			
 		case MoveNames.Scratch:{
 			if (move.cooldown<1)	return false;
 			const float range = 2;
-			RaycastHit[] hits = Physics.SphereCastAll(transform.position+Vector3.up, 1, direction ,range, 1<<10);
-			foreach(RaycastHit hit in hits){
-				if (hit.collider.gameObject!=gameObject){
-					PokemonObj enemyObj = hit.collider.GetComponent<PokemonObj>();
-					GameObject newEffect = (GameObject)Instantiate(Resources.Load("Effects/Scratch"));
-					newEffect.transform.position = hit.point;
-					if (enemyObj){
-						if (enemyObj.pokemon!=null)	enemyObj.pokemon.Damage(pokemon,move);
-						enemy = enemyObj;
-						enemyObj.enemy = this;
-					}
-					move.cooldown = 0;
-					pokemon.pp-=move.GetPPCost();
-					return true;
-				}
-			}
-			GameObject neweffect = (GameObject)Instantiate(Resources.Load("Effects/Scratch"));
-			neweffect.transform.position = transform.position+Vector3.up+direction;
-			move.cooldown = 0;
-			pokemon.pp-=move.GetPPCost();
+			Attack("Effects/Scratch", true, range, direction, move);
 			return true;}
 		}
 		gamegui.SetChatWindow (attackChat);
 		return false;
+	}
+
+	/** Attack impements an eaiser way to call moves and effects saving ~20 lines of code per move
+	 * @string 	effectResources: 	Name of what should be loaded from Resources.Load()
+	 * @bool	costHP:				True if its an attack that should cost HP (i.e. Scratch)
+	 * @float	range:				Range of the Attack
+	 * @Vector3 direction:			Copy of the direction paramater from UseMove
+	 * @Move	move:				Copy of the Move paramater from UseMove
+	 **/
+	private void Attack(string effectResource, bool costHP, float range, Vector3 direction, Move move)
+	{
+		RaycastHit[] hits = Physics.SphereCastAll(transform.position+Vector3.up, 1, direction ,range, 1<<10);
+		foreach(RaycastHit hit in hits){
+			if (hit.collider.gameObject!=gameObject){
+				PokemonObj enemyObj = hit.collider.GetComponent<PokemonObj>();
+				if(isWild && enemyObj.isWild) //make sure wild pokemon don't attack each other.
+					return;
+				if(costHP){
+					GameObject newEffect = (GameObject)Instantiate(Resources.Load(effectResource));
+					newEffect.transform.position = hit.point;
+				}else{
+					if ((enemyObj.transform.position-transform.position).sqrMagnitude<range*range){
+						GameObject newEffect = (GameObject)Instantiate(Resources.Load(effectResource));
+						newEffect.transform.position = enemyObj.transform.position+Vector3.up*0.2f;
+						newEffect.transform.parent = enemyObj.transform;
+					}
+				}
+				if (enemyObj){
+					if (enemyObj.pokemon!=null)	
+						if (costHP) enemyObj.pokemon.Damage(pokemon,move);
+						else enemyObj.pokemon.DeBuff(pokemon,move);
+					enemy = enemyObj;
+					enemyObj.enemy = this;
+				}
+				move.cooldown = 0;
+				pokemon.pp-=move.GetPPCost();
+			}
+		}
 	}
 }

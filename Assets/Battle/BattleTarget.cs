@@ -94,7 +94,7 @@ public class BattleTarget : MonoBehaviour {
 	}
 
 	private Transform FindNearestPokemon() {
-		playerTransform = Player.trainer.obj.transform;
+		playerTransform = Player.trainer.transform;
 		int numFound = allPokemon.Count;
 		if (numFound == 0) {
 			AddTargetPokemon();

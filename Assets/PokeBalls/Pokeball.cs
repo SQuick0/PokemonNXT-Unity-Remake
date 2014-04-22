@@ -37,6 +37,7 @@ public class Pokeball : MonoBehaviour {
 
 					//assuming direct control
 					if (trainer==Player.trainer){
+						Player.pokemonActive = true;
 						Debug.Log("Assuming direct control");
 					}
 				}
@@ -45,13 +46,11 @@ public class Pokeball : MonoBehaviour {
 	}
 
 	public static void ThrowPokeBall(Trainer trainer){
-		var trainerObj = trainer.GetTrainerBaseObj();
-
 		//find the nearest pokemon to capture, withing the correct direction I guess
 		float dist = 1000000;
 		GameObject pokemonOb = null;
 		foreach(GameObject poke in GameObject.FindGameObjectsWithTag("pokemon")){
-			Vector3 direct = trainerObj.transform.position-poke.transform.position;
+			Vector3 direct = trainer.transform.position-poke.transform.position;
 			if (direct.sqrMagnitude<dist){
 				dist = direct.sqrMagnitude;
 				pokemonOb = poke;
@@ -62,7 +61,7 @@ public class Pokeball : MonoBehaviour {
 		ball.transform.position = GameObject.Find("_PokeballHolder").transform.position;
 
 		if (pokemonOb!=null){
-			Vector3 direct = trainerObj.transform.position - ball.transform.position;
+			Vector3 direct = pokemonOb.transform.position - ball.transform.position;
 			ball.rigidbody.AddForce( direct.normalized*500+ Vector3.up * direct.magnitude/50);
 			ball.GetComponent<Pokeball>().trainer = trainer;
 		}
@@ -93,7 +92,7 @@ public class Pokeball : MonoBehaviour {
 				//printme = printme + "\n Okay!";
 				printme = "You've captured a " + targetPokemon.pokemon.GetName() + "!";
 				targetPokemon.Return();
-				Player.trainer.party.AddPokemon(new Pokemon(targetPokemon.pokemon.number, Player.trainer, true));
+				Player.trainer.party.AddPokemon(new Pokemon(targetPokemon.pokemon.number,true));
 			}
 			else {
 				//printme = printme + "\n It's too strong!";

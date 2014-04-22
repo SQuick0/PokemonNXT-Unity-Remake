@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SoundBanksInfo Platform="Windows" SchemaVersion="9">
+	<RootPaths>
+		<ProjectRoot>C:\Users\Even\Documents\WwiseProjects\PokemonNXT\</ProjectRoot>
+		<SourceFilesRoot>C:\Users\Even\Documents\WwiseProjects\PokemonNXT\.cache\Windows\</SourceFilesRoot>
+		<SoundBanksRoot>C:\Users\Even\Documents\WwiseProjects\PokemonNXT\GeneratedSoundBanks\Windows\</SoundBanksRoot>
+		<ExternalSourcesInputFile></ExternalSourcesInputFile>
+		<ExternalSourcesOutputRoot>C:\Users\Even\Documents\WwiseProjects\PokemonNXT\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
+	</RootPaths>
+	<DialogueEvents />
+	<StreamedFiles />
+	<SoundBanks>
+		<SoundBank Id="1355168291" Language="SFX">
+			<ShortName>Init</ShortName>
+			<Path>Init.bnk</Path>
+			<IncludedEvents />
+			<IncludedDialogueEvents />
+			<ReferencedStreamedFiles />
+			<IncludedFullFiles />
+			<IncludedPrefetchFiles />
+			<ExternalSources />
+		</SoundBank>
+		<SoundBank Id="3385186064" Language="SFX">
+			<ShortName>Route_1</ShortName>
+			<Path>Route_1.bnk</Path>
+			<IncludedEvents>
+				<Event Id="1657846177" Name="Play_Route_1" />
+			</IncludedEvents>
+			<IncludedDialogueEvents />
+			<ReferencedStreamedFiles />
+			<IncludedFullFiles>
+				<File Id="510653537" Language="SFX">
+					<ShortName>Route1 Battle Loop A1.wav</ShortName>
+					<Path>sfx\route1 battle loop a1_674a24d3.wem</Path>
+				</File>
+				<File Id="702616500" Language="SFX">
+					<ShortName>Route1 Battle Loop A2.wav</ShortName>
+					<Path>sfx\route1 battle loop a2_674a24d3.wem</Path>
+				</File>
+				<File Id="672665275" Language="SFX">
+					<ShortName>Route1 Battle Loop B1.wav</ShortName>
+					<Path>sfx\route1 battle loop b1_fb31bee9.wem</Path>
+				</File>
+				<File Id="228172388" Language="SFX">
+					<ShortName>Route1 Battle Loop B2.wav</ShortName>
+					<Path>sfx\route1 battle loop b2_fb31bee9.wem</Path>
+				</File>
+				<File Id="637501298" Language="SFX">
+					<ShortName>Route1 Explore Loop A1.wav</ShortName>
+					<Path>sfx\route1 explore loop a1_674a24d3.wem</Path>
+				</File>
+				<File Id="706506398" Language="SFX">
+					<ShortName>Route1 Explore Loop A2.wav</ShortName>
+					<Path>sfx\route1 explore loop a2_674a24d3.wem</Path>
+				</File>
+				<File Id="104988232" Language="SFX">
+					<ShortName>Route1 Explore Loop B1.wav</ShortName>
+					<Path>sfx\route1 explore loop b1_674a24d3.wem</Path>
+				</File>
+				<File Id="388989205" Language="SFX">
+					<ShortName>Route1 Explore Loop B2.wav</ShortName>
+					<Path>sfx\route1 explore loop b2_674a24d3.wem</Path>
+				</File>
+			</IncludedFullFiles>
+			<IncludedPrefetchFiles />
+			<ExternalSources />
+		</SoundBank>
+	</SoundBanks>
+</SoundBanksInfo>
