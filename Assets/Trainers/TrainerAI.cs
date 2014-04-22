@@ -7,7 +7,7 @@ public class TrainerAI : MonoBehaviour {
 
 	Pokemon currentPokemon = null;
 	Vector3 trainerPos = Vector3.zero;
-	enum States {Idle, InBattle, Defeated};
+	enum States {Idle, InBattle, DefeatText, LooseText, Defeated};
 	States currentState = States.Idle;
 
 	void Start(){
@@ -38,6 +38,17 @@ public class TrainerAI : MonoBehaviour {
 			break;}
 			
 		case States.InBattle:	InBattle();	break;
+
+		case States.DefeatText:{
+			Dialog.inDialog = true;
+			Dialog.NPCobj = gameObject;
+			Dialog.NPCname = "Young Trainer";
+			Dialog.text = "Damn. I guess you're a much better trainer that I am.";
+			if (Dialog.doneDialog){
+				Dialog.inDialog = false;
+				currentState = States.Defeated;
+			}
+			break;}
 			
 		}
 	}
@@ -50,8 +61,10 @@ public class TrainerAI : MonoBehaviour {
 			transform.rotation = Quaternion.LookRotation(direct);
 			GetComponent<Animator>().SetBool("run", true);
 		}else{
+
+			//if in position
 			if (direct.sqrMagnitude>1)	transform.position += direct;
-			currentPokemon = trainer.party.GetActivePokemon();
+			//currentPokemon = trainer.party.GetActivePokemon();
 
 			if (currentPokemon.obj!=null){
 				direct = currentPokemon.obj.transform.position-transform.position;
@@ -61,7 +74,30 @@ public class TrainerAI : MonoBehaviour {
 			direct.y = 0;
 			transform.rotation = Quaternion.LookRotation(direct);
 			GetComponent<Animator>().SetBool("run", false);
-			if (currentPokemon.obj==null)	trainer.ThrowPokemon(trainer.party.GetSlot(0).pokemon); //Only 1 pokemon is throwable
+			GetComponent<Animator>().SetBool("cheer",true);
+
+			if (currentPokemon==null){//Only 1 pokemon is throwable
+				currentPokemon = null;
+				for(int i=0; i<trainer.party.Count(); i++){
+					if (trainer.party.GetSlot(i).pokemon.hp>0){
+						currentPokemon = trainer.party.GetSlot(i).pokemon;
+						trainer.ThrowPokemon(currentPokemon);
+						break;
+					}
+				}
+				if (currentPokemon==null){
+					currentState = States.DefeatText;
+					GetComponent<Animator>().SetBool("cheer",false);
+					GetComponent<Animator>().SetBool("applause",true);
+				}
+			}else{
+
+				//give orders to the pokemon!
+				if (enemyTrainer.party.GetActivePokemon().obj!=null){
+					currentPokemon.obj.enemy = enemyTrainer.party.GetActivePokemon().obj;
+					currentPokemon.obj.GetComponent<PokemonDomesticated>().currentOrder = PokemonDomesticated.Orders.Charge;
+				}
+			}
 		}
 		
 		/*if (currentPokemonObj!=null){

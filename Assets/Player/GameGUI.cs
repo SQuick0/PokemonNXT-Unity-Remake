@@ -1,8 +1,4 @@
-﻿/*
- * Due to the excessive interface hardcoding, we may need to integrate a real interface (DFGUI? costs, or wait till Unity 5 UI?). DFGUI has a built in form editor too.
- */
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class GameGUI : MonoBehaviour {
@@ -31,7 +27,6 @@ public class GameGUI : MonoBehaviour {
 			Dialog.GUIWindow();
 			return;
 		}
-
 		Dialog.doneDialog = false;
 
 		if(chatActive){
@@ -259,12 +254,12 @@ public class GameGUI : MonoBehaviour {
 		float my = Screen.height-Input.mousePosition.y;
 		float ypos = 0;
 		foreach(var item in Player.trainer.inventory.GetItems()){
-			if (item.id == Player.trainer.item.id)	GUI.DrawTexture(new Rect(0,ypos+8,150,16), GUImgr.gradRight);
+			if (item.id == Player.item.id)	GUI.DrawTexture(new Rect(0,ypos+8,150,16), GUImgr.gradRight);
 			if (mx<100 && my>ypos && my<ypos+30){
 				GUI.DrawTexture(new Rect(0,ypos+8,150,16), GUImgr.gradRight);
 				if (Input.GetMouseButton(0) && !Player.click){
 					Player.click = true;
-					Player.trainer.inventory.Select(item);
+					Player.item = item;
 				}
 			}
 			GUI.DrawTexture(new Rect(0,ypos,32,32), item.data.icon);
@@ -275,7 +270,7 @@ public class GameGUI : MonoBehaviour {
 			ypos+=30;
 		}
 
-		if (Player.trainer.item != null){
+		if (Player.item!=null){
 			ypos = 0;
 			float width = Screen.width-400;
 			GUI.DrawTexture(new Rect(180,-50,width+40,200), GUImgr.gradDown);
@@ -285,7 +280,7 @@ public class GameGUI : MonoBehaviour {
 					GUI.DrawTexture(new Rect(200,0,width/3,25), GUImgr.gradDown);
 					if (Input.GetMouseButton(0)	&& !Player.click){
 						Player.click = true;
-						Player.trainer.item.Use();
+						Player.trainer.inventory.Use(Player.item.id, 1);
 					}
 				}
 				if (mx>200+width/3 && mx<200+2*width/3){
@@ -297,7 +292,12 @@ public class GameGUI : MonoBehaviour {
 					GUI.DrawTexture(new Rect(200+2*width/3,0,width/3,25), GUImgr.gradDown);
 					if (Input.GetMouseButton(0)	&& !Player.click){
 						Player.click = true;
-						Player.trainer.inventory.Remove(Player.trainer.item, 1);
+						Player.item.id--;
+						if (Player.item.id<=0){
+							Player.trainer.inventory.Remove(Player.item.id, 1);
+							Player.item = null;
+							return;
+						}
 					}
 				}
 			}
@@ -308,7 +308,7 @@ public class GameGUI : MonoBehaviour {
 			
 			ypos += 25;
 			GUI.skin.label.alignment = TextAnchor.MiddleLeft;
-			GUI.Label(new Rect(200,ypos,width,50),Player.trainer.item.data.description);
+			GUI.Label(new Rect(200,ypos,width,50),Player.item.data.description);
 		}
 	}
 	

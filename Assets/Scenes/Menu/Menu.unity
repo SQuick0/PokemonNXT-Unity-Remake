@@ -356,7 +356,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 518473795}
   - 95: {fileID: 518473799}
-  - 114: {fileID: 518473796}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -383,18 +382,6 @@ Transform:
   - {fileID: 1653258420}
   - {fileID: 1394691063}
   m_Father: {fileID: 0}
---- !u!114 &518473796
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400002, guid: a3a8a853e69997e41be0d9e83a54a10f,
-    type: 2}
-  m_PrefabInternal: {fileID: 658173698}
-  m_GameObject: {fileID: 518473794}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e15262983a9b654ca8a1da881540cdf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!95 &518473799
 Animator:
   serializedVersion: 2
@@ -1034,6 +1021,10 @@ Prefab:
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 238d1397dee3596438d7f6a3e6f9109c, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 238d1397dee3596438d7f6a3e6f9109c, type: 2}
   m_RootGameObject: {fileID: 1129973547}
@@ -1280,7 +1271,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &1129973548
 AudioSource:
   m_ObjectHideFlags: 0

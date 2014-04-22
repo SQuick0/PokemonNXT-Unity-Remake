@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class BattleTarget : MonoBehaviour {
+public class Target : MonoBehaviour {
 	private List<Transform> allPokemon = new List<Transform>();
 	private Transform targetedPokemon;
 	private Transform playerTransform;

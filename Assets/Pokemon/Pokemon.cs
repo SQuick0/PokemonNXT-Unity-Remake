@@ -1,12 +1,8 @@
-﻿/*
- * Remember to re-write this class once the database is in.
- */
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Pokemon : Target {
+public class Pokemon{
 	public bool thrown = false;
 	public PokemonObj obj = null;
 	public int number = 0;
@@ -52,10 +48,6 @@ public class Pokemon : Target {
 		hp = 1;
 		pp = 1;
 		PopulateMoves();
-	}
-
-	public override Target.TARGETS GetTargetType() {
-		return Target.TARGETS.POKEMON;
 	}
 	
 	public void Damage(Pokemon otherPoke, Move move){

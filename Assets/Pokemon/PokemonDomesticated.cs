@@ -30,6 +30,18 @@ public class PokemonDomesticated : MonoBehaviour {
 			if (direct.sqrMagnitude<10)	letsGo = false;
 			if (direct.sqrMagnitude>20)	letsGo = true;
 			break;}
+		case Orders.Charge:{
+			if (pokemonObj.enemy!=null){
+				Vector3 direct = pokemonObj.enemy.transform.position -transform.position;
+				direct.y = 0;
+				transform.rotation = Quaternion.LookRotation(direct);
+				if (direct.sqrMagnitude>3){
+					pokemonObj.SetVelocity(direct.normalized * pokemonObj.speed);
+				}else{
+					pokemonObj.SetVelocity(Vector3.zero);
+				}
+			}
+			break;}
 		}
 	}
 
