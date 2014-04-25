@@ -121,6 +121,13 @@ public class Player : MonoBehaviour {
 				GameGUI.menuActive = !GameGUI.menuActive;
 			click = true;
 		}
+
+		//hides or reveals the stats(Data) popup on press of k
+		if (Input.GetKeyDown (KeyCode.K) && !GameGUI.menuActive) {
+			if (!pokemonActive)
+			GameGUI.dataWindow = !GameGUI.dataWindow;
+
+		}
 		
 		//capture pokemon
 		if(Input.GetKeyDown("c")) {
