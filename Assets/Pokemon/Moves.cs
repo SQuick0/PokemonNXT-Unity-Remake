@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.ComponentModel;
+using System.Reflection;
 
 public class Move{
 	public Move(MoveNames move){
@@ -18,6 +20,19 @@ public class Move{
 		case MoveNames.TailWhip:		return 0.02f;
 		}
 		return 0;
+	}
+	//Utilizes the description field in the move enum to give spaced moves.
+	public string ToFriendlyString(){
+		FieldInfo fi = this.moveType.GetType().GetField(this.moveType.ToString());
+		
+		if (null != fi)
+		{
+			object[] attrs = fi.GetCustomAttributes(typeof(DescriptionAttribute), true);
+			if (attrs != null && attrs.Length > 0)
+				return ((DescriptionAttribute)attrs[0]).Description;
+		}
+		
+		return this.moveType.ToString ();
 	}
 }
 
@@ -60,6 +75,7 @@ public enum MoveNames{
 	TakeDown,
 	Thrash,
 	DoubleEdge,
+	[Description("Tail Whip")]
 	TailWhip,
 	PoisonSting,
 	Twineedle,
