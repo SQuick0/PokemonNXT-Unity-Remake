@@ -1,12 +1,8 @@
-﻿/*
- * Remember to re-write this class once the database is in.
- */
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Pokemon : Target {
+public class Pokemon{
 	public bool thrown = false;
 	public PokemonObj obj = null;
 	public int number = 0;
@@ -18,12 +14,17 @@ public class Pokemon : Target {
 	public Texture2D icon = null;
 	public List<Move> moves = new List<Move>();
 	public bool isPlayer = false;
-	
+	public float currentHealth = 10;
+	public float currentXP = 0;
 	public float health = 10;
 	public float attack = 10;
 	public float defence = 10;
+	public float damage= 0;
 	public float speed = 10;
+	public string moveCast ;
 	public Inventory.Item heldItem = null;
+	
+	
 	
 	public Pokemon(int number, bool isPlayer){
 		this.number = number;
@@ -31,8 +32,9 @@ public class Pokemon : Target {
 		name = GetName(number);
 		icon = GetIcon(number);
 		level = 5;
-		
 		hp = 1;
+		currentHealth = TotalHP();
+		health = TotalHP();
 		attack = TotalAttack();
 		defence = TotalDefence();
 		speed = TotalSpeed ();
@@ -48,38 +50,49 @@ public class Pokemon : Target {
 		name = GetName(number);
 		icon = GetIcon(number);
 		this.level = level;
-		
+		currentHealth = TotalHP();
+		health = TotalHP();
+		attack = TotalAttack();
+		defence = TotalDefence();
+		speed = TotalSpeed ();
 		hp = 1;
 		pp = 1;
 		PopulateMoves();
 	}
-
-	public override Target.TARGETS GetTargetType() {
-		return Target.TARGETS.POKEMON;
-	}
+	
+	
+	public float isHPZero(){ return hp < 0 ? 0 : hp;}
+	
+	
 	
 	public void Damage(Pokemon otherPoke, Move move){
-		//this must take into account weakness and attributes (defense, attack, sp_Defense, sp_Attack)
+		//this must take p account weakness and attributes (defense, attack, sp_Defense, sp_Attack)
 		//this must be object oriented
+		moveCast = move.moveType.ToString () ;
 		switch(move.moveType){ //These attack type and stab are not included. They(included atkpower) will have to be be invoked directly from database and switch wont be required
-			case MoveNames.Tackle:{
+		case MoveNames.Tackle:{
 			int atkPower = 35;
-			float damage = ((((2 * otherPoke.level / 5 + 2) * otherPoke.attack * atkPower / defence) / 50) + 2) * Random.Range(217,255)/255; //((2A/5+2)*B*C)/D)/50)+2)*X)*Y/10)*Z)/255
+			damage = ((((2 * otherPoke.level / 5 + 2) * otherPoke.attack * atkPower / defence) / 50) + 2) * Random.Range(217,255)/255; //((2A/5+2)*B*C)/D)/50)+2)*X)*Y/10)*Z)/255
 			hp -= damage/TotalHP();	
+			isHPZero();
+			currentHealth -= damage;
 			GiveXP(10);
 			break;
-			}
+		}
 		case MoveNames.Scratch:{
 			int atkPower = 35;
-			float damage = ((((2 * otherPoke.level / 5 + 2) * otherPoke.attack * atkPower / defence) / 50) + 2) * Random.Range(217,255)/255; //((2A/5+2)*B*C)/D)/50)+2)*X)*Y/10)*Z)/255
+			
+			damage = ((((2 * otherPoke.level / 5 + 2) * otherPoke.attack * atkPower / defence) / 50) + 2) * Random.Range(217,255)/255; //((2A/5+2)*B*C)/D)/50)+2)*X)*Y/10)*Z)/255
 			hp -= damage/TotalHP();	
+			isHPZero();
 			GiveXP(10);
 			break;
-			}
+		}
 		}
 	}
 	
 	public void DeBuff(Pokemon otherPoke, Move move){
+		
 		switch(move.moveType){
 		case MoveNames.Growl:{
 			float AttackedLowered = .7f;//unofficial amount . Stacking will be required to get new levels of buff
@@ -93,7 +106,7 @@ public class Pokemon : Target {
 			defence = defence * DefenceLowered;	//replace with some elabourate forumla
 			GiveXP(10);
 			break;		
-		    }
+		}
 		}
 	}
 	//changed Return types must be float. And then rounded up to int when displaying
@@ -144,6 +157,13 @@ public class Pokemon : Target {
 			if (level>=7)	moves.Add(new Move(MoveNames.FocusEnergy));
 			if (level>=10)	moves.Add(new Move(MoveNames.Bite));
 			break;
+		case 16:	//Pidgey
+			moves.Add(new Move(MoveNames.Tackle));
+			moves.Add(new Move(MoveNames.TailWhip));
+			if (level>=4)	moves.Add(new Move(MoveNames.QuickAttack));
+			if (level>=7)	moves.Add(new Move(MoveNames.FocusEnergy));
+			if (level>=10)	moves.Add(new Move(MoveNames.Bite));
+			break;
 			
 		}
 	}
@@ -152,14 +172,42 @@ public class Pokemon : Target {
 		return level*level*level;
 	}
 	public void GiveXP(int addXP){
+		currentXP += (float)addXP;
 		xp += (float)addXP/(float)XPtoNextLevel(level);
 		if (xp>1){
 			float excessXP = (xp-1)*(float)XPtoNextLevel(level);
 			level++;
+			IncreaseLvlStats();
 			xp = excessXP/(float)XPtoNextLevel(level);
 		}
 	}
-	
+	public void IncreaseLvlStats (){
+		
+		attack = TotalAttack ();
+		defence = TotalDefence ();
+		speed = TotalSpeed ();
+		health = TotalHP ();
+	}
+	//public string GetName() {
+		//return this.name;
+	//}
+	//added Getters for Current Pokemon pane, and to possibly use elsewhere.
+	public float CurrentHP(){
+		return (this.TotalHP () * this.hp);
+	}
+	public float PercentHP(){
+		return this.hp;
+	}
+	/*public string GetMoveName(int slotNum) {
+		if (slotNum >= this.moves.Count) {
+			return ("None");
+		}
+		var thisMove = this.moves [slotNum];
+		return (thisMove.getMoveName());
+	}*/
+	public string GetItemName() {
+		return (this.heldItem.ToString());
+	}
 	public static string GetName(int number){
 		//instead of doing this it would be much easier to pass in a pokemon and take it's name from its inherent method
 		switch(number){
@@ -167,6 +215,7 @@ public class Pokemon : Target {
 		case 4: return "Charmander";
 		case 7: return "Squirtle";
 		case 19: return "Rattata";
+		case 16: return "Pidgey";
 		}
 		return "Missingno";
 	}
@@ -178,6 +227,7 @@ public class Pokemon : Target {
 		case "charmander":	return 4;
 		case "squirtle":	return 7;
 		case "rattata":		return 19;
+		case "pidgey":	return 16;
 		}
 		return 0;
 	}
@@ -186,7 +236,7 @@ public class Pokemon : Target {
 		return (Texture2D)Resources.Load("Icons/"+GetName(number));
 	}
 }
-
+   
 enum ElementNames{
 	Normal,
 	Fire,

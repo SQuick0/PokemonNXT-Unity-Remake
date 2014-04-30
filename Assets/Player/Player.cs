@@ -9,7 +9,7 @@ public class Player : MonoBehaviour {
 	public static Trainer trainer = null;
 	public static Pokemon pokemon {get{return trainer.party.GetActivePokemon();} set{}}
 	public static bool pokemonActive = false;
-
+	public static PokemonGUI pokemonGUI = new PokemonGUI();
 	public static GameGUI gamegui = new GameGUI();
 
 	void Start(){
@@ -70,6 +70,36 @@ public class Player : MonoBehaviour {
 			pokemonActive = false;
 			pokemon.obj.Return();
 		}
+		if(Input.GetKeyDown ("x")){
+			if(PokemonGUI.HpBarToggle)
+				PokemonGUI.HpBarToggle=false;
+			else
+				PokemonGUI.HpBarToggle=true;
+			
+			
+		}
+		
+		//if (Input.GetKeyDown (KeyCode.K) && !GameGUI.menuActive) {
+			//if (pokemonActive)
+			//GameGUI.dataWindow = !GameGUI.dataWindow;
+		
+				//}
+
+		if (Input.GetKeyDown ("h")) {
+			PokeCenter.HealPokemon ();
+		}
+		if (Input.GetKeyDown(KeyCode.Escape) && !click){
+			if (pokemonActive)
+			{
+				pokemonActive = false;
+				pokemon.obj.Return();
+				Vector3 vel = Quaternion.Euler(0,CameraControl.ay,0) * (Vector3.forward*Input.GetAxis("Vertical") + Vector3.right*Input.GetAxis("Horizontal"));
+				trainer.SetVelocity(vel);
+			}
+			else
+				GameGUI.menuActive = !GameGUI.menuActive;
+			click = true;
+		}
 	}
 
 	public void HandleTrainer() {
@@ -114,13 +144,7 @@ public class Player : MonoBehaviour {
 		}
 		
 		//activate menu
-		if (Input.GetKeyDown(KeyCode.Escape) && !click){
-			if (pokemonActive)
-				pokemonActive = false;
-			else
-				GameGUI.menuActive = !GameGUI.menuActive;
-			click = true;
-		}
+	
 		
 		//capture pokemon
 		if(Input.GetKeyDown("c")) {
@@ -138,10 +162,7 @@ public class Player : MonoBehaviour {
 			
 			click = true;
 		}
-		
-		if (Input.GetKeyDown ("h")) {
-			PokeCenter.HealPokemon ();
-		}
+	
 		/*
 	 * don't try using this right now, because it doesn't exist!
 		if (Input.GetKeyDown ("k")) {

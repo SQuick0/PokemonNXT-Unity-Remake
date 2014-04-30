@@ -101,19 +101,23 @@ public class PokemonObj : MonoBehaviour {
 	 * @Move	move:				Copy of the Move paramater from UseMove
 	 **/
 	private void Attack(string effectResource, bool costHP, float range, Vector3 direction, Move move)
-	{
+	{	
+		move.cooldown = 0;
+		pokemon.pp-=move.GetPPCost();
 		RaycastHit[] hits = Physics.SphereCastAll(transform.position+Vector3.up, 1, direction ,range, 1<<10);
+	
 		foreach(RaycastHit hit in hits){
 			if (hit.collider.gameObject!=gameObject){
+				GameObject newEffect = (GameObject)Instantiate(Resources.Load(effectResource));
 				PokemonObj enemyObj = hit.collider.GetComponent<PokemonObj>();
 				if(isWild && enemyObj.isWild) //make sure wild pokemon don't attack each other.
 					return;
 				if(costHP){
-					GameObject newEffect = (GameObject)Instantiate(Resources.Load(effectResource));
+
 					newEffect.transform.position = hit.point;
 				}else{
 					if ((enemyObj.transform.position-transform.position).sqrMagnitude<range*range){
-						GameObject newEffect = (GameObject)Instantiate(Resources.Load(effectResource));
+
 						newEffect.transform.position = enemyObj.transform.position+Vector3.up*0.2f;
 						newEffect.transform.parent = enemyObj.transform;
 					}
@@ -125,8 +129,7 @@ public class PokemonObj : MonoBehaviour {
 					enemy = enemyObj;
 					enemyObj.enemy = this;
 				}
-				move.cooldown = 0;
-				pokemon.pp-=move.GetPPCost();
+
 			}
 		}
 	}

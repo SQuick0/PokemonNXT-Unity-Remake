@@ -33,6 +33,7 @@ public class Pokeball : MonoBehaviour {
 					pokeObj.name = pokemon.name;
 					pokemon.obj = pokeObj.GetComponent<PokemonObj>();
 					PokemonDomesticated pokeDom = pokeObj.AddComponent<PokemonDomesticated>();
+					PokemonGUI pokeGui = pokeObj.AddComponent<PokemonGUI>();
 					pokeDom.trainer = trainer;
 
 					//assuming direct control
