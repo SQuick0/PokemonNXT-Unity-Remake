@@ -8,7 +8,11 @@ using System.Collections;
 public class GameGUI : MonoBehaviour {
 	public static bool menuActive = false;
 	public static bool chatActive=false;
+<<<<<<< HEAD
 	public static bool dataWindow=false;
+=======
+	public static bool dataWindow=true;
+>>>>>>> c69ba70631e8b119932c1990146c594b0892b79d
 	public static string addToChat;
 	public static ArrayList chatHistory = new ArrayList();
 	int pokedexEntery = 1;
@@ -95,15 +99,22 @@ public class GameGUI : MonoBehaviour {
 		foreach(var slot in Player.trainer.party.GetSlots()){
 			var pokemon = slot.pokemon;
 
-			if (party.IsActive(pokemon))
+			if (party.IsActive(pokemon)){
 				GUI.DrawTexture(new Rect(0,ypos+16,100,32), GUImgr.gradRight);
+<<<<<<< HEAD
 				//this.OpenStatWindow (pokemon);
+=======
+				this.OpenStatWindow (pokemon);
+			}
+
+>>>>>>> c69ba70631e8b119932c1990146c594b0892b79d
 			GUI.DrawTexture(new Rect(0,ypos,64,64), pokemon.icon);
 			GUI.Label(new Rect(64,ypos,200,25), pokemon.name+" lvl"+pokemon.level.ToString());
 			GUImgr.DrawBar(new Rect(64,ypos+25,100,5), pokemon.hp, GUImgr.hp);
 			GUImgr.DrawBar(new Rect(64,ypos+35,100,5), pokemon.xp, GUImgr.xp);
 			ypos += 70;
 		}
+	
 	}
 
 	
@@ -151,6 +162,39 @@ public class GameGUI : MonoBehaviour {
 		if (Network.peerType==NetworkPeerType.Disconnected){
 			GUI.Label(new Rect(20, ypos, 200,25), "Not connected");
 		}
+	}
+
+	//Creates a box for a Pokemon Overview.  Currently shows a base stat overview for the current
+	//selected pokemon.  Having trouble converting out move and item names for the overview.
+	//Currently has hard coded names for items/moves to test UI spacing.
+	public void OpenStatWindow(Pokemon pkmn) {
+		if (dataWindow) {
+			GUI.DrawTexture (new Rect (Screen.width - 275, Screen.height - 250, 250, 250), GUImgr.gradRight);
+			/*foreach (var slot in Player.trainer.party.GetSlots ()) {
+	var pokemon = slot.pokemon;
+	
+	if (party.IsActive (pokemon)) {*/
+			GUI.Label (new Rect (Screen.width - 270, Screen.height - 245, 200, 25), pkmn.GetName ());
+			GUI.Label (new Rect (Screen.width - 270, Screen.height - 215, 75, 25), "HP: " + pkmn.CurrentHP () + "/" + pkmn.TotalHP ());
+			GUI.Label (new Rect (Screen.width - 270, Screen.height - 185, 75, 25), "Atk: " + pkmn.TotalAttack ());
+			GUI.Label (new Rect (Screen.width - 270, Screen.height - 155, 75, 25), "Def: " + pkmn.TotalDefence ());
+			GUI.Label (new Rect (Screen.width - 270, Screen.height - 125, 75, 25), "Spd: " + pkmn.TotalSpeed ());
+			//As far as I can tell, held items aren't implemented, so I'm just hardcoding None.
+			GUI.Label (new Rect (Screen.width - 195, Screen.height - 215, 190, 25), "Item: None" /*+ pokemon.GetItemName()*/);
+			int height = 185;
+			int loop = 1;
+			foreach (Move mve in pkmn.moves) {
+					if (loop > 4)
+							break;
+					GUI.Label (new Rect (Screen.width - 195, Screen.height - height, 190, 25), "Move " + loop + ": " + mve.ToFriendlyString ());
+					loop++;
+					height -= 30;
+			}
+		}
+		//GUI.Label (new Rect (Screen.width - 195, Screen.height - 185, 190, 25), "Move 1: Hydro Cannon" /*+ pokemon.GetMoveName(0)*/);
+		//GUI.Label (new Rect (Screen.width - 195, Screen.height - 155, 190, 25), "Move 2: " /*+ pokemon.GetMoveName(0)*/);
+		//GUI.Label (new Rect (Screen.width - 195, Screen.height - 125, 190, 25), "Move 3: " /*+ pokemon.GetMoveName(0)*/);
+		//GUI.Label (new Rect (Screen.width - 195, Screen.height - 95, 190, 25), "Move 4: " /*+ pokemon.GetMoveName(0)*/);
 	}
 
 	public void OpenChatWindowa() {
