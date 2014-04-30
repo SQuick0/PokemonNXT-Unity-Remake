@@ -125,23 +125,6 @@ public class Pokemon{
 	public string GetName() {
 		return this.name;
 	}
-	//added Getters for Current Pokemon pane, and to possibly use elsewhere.
-	public float CurrentHP(){
-		return (this.TotalHP () * this.hp);
-	}
-	public float PercentHP(){
-		return this.hp;
-	}
-	/*public string GetMoveName(int slotNum) {
-		if (slotNum >= this.moves.Count) {
-			return ("None");
-		}
-		var thisMove = this.moves [slotNum];
-		return (thisMove.getMoveName());
-	}*/
-	public string GetItemName() {
-		return (this.heldItem.ToString());
-	}
 	
 	public void PopulateMoves(){
 		switch(number){

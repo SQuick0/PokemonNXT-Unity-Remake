@@ -144,9 +144,6 @@ public class Player : MonoBehaviour {
 		}
 		
 		//activate menu
-<<<<<<< HEAD
-	
-=======
 		if (Input.GetKeyDown(KeyCode.Escape) && !click){
 			if (pokemonActive)
 				pokemonActive = false;
@@ -161,7 +158,6 @@ public class Player : MonoBehaviour {
 			GameGUI.dataWindow = !GameGUI.dataWindow;
 
 		}
->>>>>>> c69ba70631e8b119932c1990146c594b0892b79d
 		
 		//capture pokemon
 		if(Input.GetKeyDown("c")) {

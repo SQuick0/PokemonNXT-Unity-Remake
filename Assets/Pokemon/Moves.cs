@@ -21,10 +21,8 @@ public class Move{
 		}
 		return 0;
 	}
-<<<<<<< HEAD
-=======
+
 	//Utilizes the description field in the move enum to give spaced moves.
->>>>>>> c69ba70631e8b119932c1990146c594b0892b79d
 	public string ToFriendlyString(){
 		FieldInfo fi = this.moveType.GetType().GetField(this.moveType.ToString());
 		
