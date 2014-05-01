@@ -130,6 +130,9 @@ public class Player : MonoBehaviour {
 		
 		//throw pokemon
 		if (!click && Input.GetKey(KeyCode.Return)){
+		//Swap above line for this one if you need to break the code to work without RebindInspector.
+		//Suspect errors with Player.click, but haven't really investigated.
+		//if (Input.GetKey(KeyCode.Return)){
 			if (pokemon != null && pokemon.obj==null){
 				trainer.ThrowPokemon(pokemon);
 			}else{
