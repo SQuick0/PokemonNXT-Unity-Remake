@@ -92,7 +92,7 @@ public class GameGUI : MonoBehaviour {
 		
 		ypos = 0;
 		var party = Player.trainer.party;
-		foreach(var slot in Player.trainer.party.GetSlots()){
+		/*foreach(var slot in Player.trainer.party.GetSlots()){
 			var pokemon = slot.pokemon;
 
 			if (party.IsActive(pokemon)){
@@ -103,8 +103,29 @@ public class GameGUI : MonoBehaviour {
 
 			GUI.DrawTexture(new Rect(0,ypos,64,64), pokemon.icon);
 			GUI.Label(new Rect(64,ypos,200,25), pokemon.name+" lvl"+pokemon.level.ToString());
-			GUImgr.DrawBar(new Rect(64,ypos+25,100,5), pokemon.hp, GUImgr.hp);
+			//changed to do tests.  DO NOT COMMIT
+			GUImgr.DrawBar(new Rect(64,ypos+25,100,5), pokemon.hp, GUImgr.hp, false);
 			GUImgr.DrawBar(new Rect(64,ypos+35,100,5), pokemon.xp, GUImgr.xp);
+			ypos += 70;
+		}
+		*/
+		//New Age UI
+		foreach (var slot in Player.trainer.party.GetSlots()) {
+			var pokemon = slot.pokemon;
+			var label = new GUIStyle();
+			label.fontSize = 12;
+			label.fontStyle = FontStyle.Bold;
+
+			if (party.IsActive (pokemon)) {
+				//GUI.DrawTexture (new Rect (0, ypos + 16, 100, 64), GUImgr.gradRight);
+				this.OpenStatWindow (pokemon);
+			}
+			GUI.DrawTexture (new Rect(0, ypos, 72, 70), GUImgr.statOk);
+			GUI.DrawTexture(new Rect(0, ypos, 48, 48), pokemon.icon);
+			GUI.Label(new Rect(36, ypos, 40, 25), "Lv: "+pokemon.level, label);
+			GUImgr.DrawBar (new Rect (0, ypos + 53, 48, 4), pokemon.xp, GUImgr.xp, true);
+			GUImgr.DrawBar (new Rect (53, ypos + 20, 4, 36), pokemon.pp, GUImgr.pp, false);
+			GUImgr.DrawBar (new Rect (58, ypos + 20, 4, 36), pokemon.hp, GUImgr.hp, false);
 			ypos += 70;
 		}
 	
@@ -117,10 +138,6 @@ public class GameGUI : MonoBehaviour {
 	public void OpenStatWindow(Pokemon pkmn) {
 		if (dataWindow) {
 			GUI.DrawTexture (new Rect (Screen.width - 275, Screen.height - 250, 250, 250), GUImgr.gradRight);
-			/*foreach (var slot in Player.trainer.party.GetSlots ()) {
-	var pokemon = slot.pokemon;
-	
-	if (party.IsActive (pokemon)) {*/
 			GUI.Label (new Rect (Screen.width - 270, Screen.height - 245, 200, 25), pkmn.GetName ());
 			GUI.Label (new Rect (Screen.width - 270, Screen.height - 215, 75, 25), "HP: " + pkmn.CurrentHP () + "/" + pkmn.TotalHP ());
 			GUI.Label (new Rect (Screen.width - 270, Screen.height - 185, 75, 25), "Atk: " + pkmn.TotalAttack ());
@@ -138,10 +155,6 @@ public class GameGUI : MonoBehaviour {
 				height -= 30;
 			}
 		}
-		//GUI.Label (new Rect (Screen.width - 195, Screen.height - 185, 190, 25), "Move 1: Hydro Cannon" /*+ pokemon.GetMoveName(0)*/);
-		//GUI.Label (new Rect (Screen.width - 195, Screen.height - 155, 190, 25), "Move 2: " /*+ pokemon.GetMoveName(0)*/);
-		//GUI.Label (new Rect (Screen.width - 195, Screen.height - 125, 190, 25), "Move 3: " /*+ pokemon.GetMoveName(0)*/);
-		//GUI.Label (new Rect (Screen.width - 195, Screen.height - 95, 190, 25), "Move 4: " /*+ pokemon.GetMoveName(0)*/);
 	}
 	
 	void MultiplayerWindow(){
@@ -238,13 +251,26 @@ public class GameGUI : MonoBehaviour {
 		float mx = Input.mousePosition.x;
 		float my = Screen.height-Input.mousePosition.y;
 		float xpos = Screen.width/2 - party.Count()*64/2;
+		float swapXPos = 430;
 		Pokemon pokemon;
+		int curSlot = 0;
 		
 		foreach(var slot in party.GetSlots()){
 			pokemon = slot.pokemon;
 			
-			if (party.IsActive(pokemon))
+			if (party.IsActive(pokemon)) {
 				GUI.DrawTexture(new Rect(xpos+16,0,32,50), GUImgr.gradDown);
+				curSlot = slot.index;
+			}
+			/*else {
+				GUI.DrawTexture (new Rect(swapXPos, Screen.height/4, 64, 64), GUImgr.statOk);
+				//GUI.DrawTexture(new Rect(swapXPos,Screen.height/4, 64, 64), pokemon.icon);
+				loop++;
+				if (GUI.Button(new Rect(swapXPos,Screen.height/4,64,64), pokemon.icon)) {
+					party.Swap (loop, curSlot);
+				}
+				swapXPos+=70;
+			}*/
 			
 			if (my<64 && mx>xpos && mx<xpos+64){
 				GUI.DrawTexture(new Rect(xpos+16,0,32,50), GUImgr.gradDown);
@@ -257,9 +283,28 @@ public class GameGUI : MonoBehaviour {
 					}
 				}
 			}
-			
+
 			GUI.DrawTexture(new Rect(xpos,0,64,64), pokemon.icon);
 			xpos+=64;
+
+		}
+
+		//I really HATE that I have to do a double loop here to do my swap buttons, but I don't have
+		//a good way of making sure that my active pokemon is set before I make the buttons otherwise.
+		//Purpose: To allow for a quick swap of the party, by simply clicking a member portrait while
+		//looking at the party member you want to switch.
+		GUI.DrawTexture (new Rect (330, Screen.height / 8, 100 + 70*(party.Count () - 1), 70), GUImgr.bckDrop);
+		GUI.Label (new Rect (330, Screen.height / 8, 150, 25), "Quick Swap: ");
+		foreach (var slot in party.GetSlots()) {
+			pokemon = slot.pokemon;
+			if (!party.IsActive(pokemon)) {
+				GUI.DrawTexture (new Rect (swapXPos, 1* Screen.height / 8, 64, 64), GUImgr.statOk);
+				//GUI.DrawTexture(new Rect(swapXPos,Screen.height/4, 64, 64), pokemon.icon);
+				if (GUI.Button (new Rect (swapXPos, 1* Screen.height / 8, 64, 64), pokemon.icon)) {
+					party.Swap (slot.index, curSlot);
+				}
+				swapXPos += 70;
+			}
 		}
 		
 		if (Player.pokemon!=null){
