@@ -13,8 +13,6 @@ public class CameraControl : MonoBehaviour {
 	float cameraZoom = 6;
 	public static bool releaseCursor = false;
 	BattleTarget activeTarget;
-	//public GameGUI gamegui = new GameGUI();
-
 
 	void Start() {
 		//activeTarget = GetComponent<Target>();
@@ -55,6 +53,12 @@ public class CameraControl : MonoBehaviour {
 		//Zoom camera in/out with mouse scrollwheel
 		if (Input.GetAxis ("Mouse ScrollWheel")!=0) {
 			cameraZoom-=(Input.GetAxis("Mouse ScrollWheel")*4);
+			if (cameraZoom <= -1) {
+				cameraZoom = -1;
+			}
+			else if (cameraZoom >= 20) {
+				cameraZoom = 20;
+			}
 		}
 	}
 

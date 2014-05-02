@@ -15,6 +15,7 @@ public class Player : MonoBehaviour {
 	void Start(){
 		trainer = GameObject.Find("Player").GetComponent<Trainer>();
 		gameObject.AddComponent ("CameraControl");
+		trainer.gameObject.AddComponent ("PlayerMovement");
 	}
 
 	void Update(){
