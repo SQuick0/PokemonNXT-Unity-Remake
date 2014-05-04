@@ -14,9 +14,11 @@ public class GameGUI : MonoBehaviour {
 	int pokedexEntery = 1;
 	enum MenuWindows{None, Multiplayer, Pokedex, Pokemon, Inventory, Talents, Options, Quit};
 	MenuWindows currentWindow = MenuWindows.None;
+	PartyMenu partyMenu;
 
 	void Start(){
 		GUImgr.Start();
+		partyMenu = gameObject.AddComponent<PartyMenu> ();
 	}
 
 	void OnGUI(){
@@ -112,20 +114,12 @@ public class GameGUI : MonoBehaviour {
 		//New Age UI
 		foreach (var slot in Player.trainer.party.GetSlots()) {
 			var pokemon = slot.pokemon;
-			var label = new GUIStyle();
-			label.fontSize = 12;
-			label.fontStyle = FontStyle.Bold;
-
 			if (party.IsActive (pokemon)) {
 				//GUI.DrawTexture (new Rect (0, ypos + 16, 100, 64), GUImgr.gradRight);
 				this.OpenStatWindow (pokemon);
 			}
-			GUI.DrawTexture (new Rect(0, ypos, 72, 70), GUImgr.statOk);
-			GUI.DrawTexture(new Rect(0, ypos, 48, 48), pokemon.icon);
-			GUI.Label(new Rect(36, ypos, 40, 25), "Lv: "+pokemon.level, label);
-			GUImgr.DrawBar (new Rect (0, ypos + 53, 48, 4), pokemon.xp, GUImgr.xp, true);
-			GUImgr.DrawBar (new Rect (53, ypos + 20, 4, 36), pokemon.pp, GUImgr.pp, false);
-			GUImgr.DrawBar (new Rect (58, ypos + 20, 4, 36), pokemon.hp, GUImgr.hp, false);
+			gameObject.AddComponent<PartyMenu>().AddSlot(pokemon,ypos);
+			//partyMenu.AddSlot(pokemon,ypos);
 			ypos += 70;
 		}
 	

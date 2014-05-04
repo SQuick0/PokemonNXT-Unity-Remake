@@ -12,12 +12,6 @@ public class CameraControl : MonoBehaviour {
 	Vector3 camPos = Vector3.zero;
 	float cameraZoom = 6;
 	public static bool releaseCursor = false;
-	BattleTarget activeTarget;
-
-	void Start() {
-		//activeTarget = GetComponent<Target>();
-		gameObject.AddComponent ("BattleTarget");
-	}
 
 	void Update() {
 		//camera input
@@ -31,19 +25,6 @@ public class CameraControl : MonoBehaviour {
 		//release cursor true so you can click on stuff
 		if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) {
 			releaseCursor = true;
-			if (Input.GetMouseButtonDown(0)){ // when button clicked...
-				RaycastHit hit; // cast a ray from mouse pointer:
-				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-				// if enemy hit...
-				if (Physics.Raycast(ray, out hit) && hit.transform.CompareTag("pokemon")){
-					//gamegui.SetChatWindow("Found");
-					if (activeTarget.GetActiveTarget()) {
-						activeTarget.UnHighlightTarget();
-					}
-					activeTarget.SetTarget(hit.transform);
-					activeTarget.HighlightTarget();
-				}
-			}
 		}
 		//Capture cursor
 		if (Input.GetKeyUp (KeyCode.LeftAlt) || Input.GetKeyUp(KeyCode.RightAlt)) {

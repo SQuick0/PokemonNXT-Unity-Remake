@@ -9,8 +9,7 @@ public class PokemonObj : MonoBehaviour {
 	
 	Vector3 velocity = Vector3.zero;
 	bool returning = false;
-	GameGUI gamegui = new GameGUI();
-	
+
 	void Update(){
 		velocity -= rigidbody.velocity;
 		velocity.y = 0;
@@ -38,9 +37,6 @@ public class PokemonObj : MonoBehaviour {
 		if (returning)	return;
 		if (Player.pokemon == pokemon) {
 			Player.pokemonActive = false;
-			//gamegui.SetChatWindow(gameObject.GetComponent<Pokeball>().pokemon.GetName() + "! Return!");
-			//gamegui.SetChatWindow(Player.pokemonObj.GetComponent<Pokeball>().pokemon.GetName() + "! Return!");
-			gamegui.SetChatWindow(pokemon.GetName() + "! Return!");
 		}
 		returning = true;
 		GameObject effect = (GameObject)Instantiate(Resources.Load("ReturnEffect"));
@@ -89,7 +85,6 @@ public class PokemonObj : MonoBehaviour {
 			Attack("Effects/Scratch", true, range, direction, move);
 			return true;}
 		}
-		gamegui.SetChatWindow (attackChat);
 		return false;
 	}
 

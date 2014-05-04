@@ -25,9 +25,6 @@ public class Trainer : MonoBehaviour { //Need to separate the Unity object from 
 		inventory.Add(4, 2);
 	}
 
-	void Update(){
-	}
-
 	public Target.TARGETS GetTargetType() {
 		return Target.TARGETS.TRAINER;
 	}

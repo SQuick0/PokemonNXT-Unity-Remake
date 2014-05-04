@@ -4,33 +4,32 @@ using System.Collections;
 
 public class PokemonGUI: MonoBehaviour {
 	
-	public static bool HpBarToggle = false;
+	public bool HpBarToggle{get;set;}
 	BattleGUI battleGUI;
 	PokemonObj pokemonObj;
-	//GameGUI gamegui = new GameGUI();
+	//GameGUI gamegui;
 	void Awake(){
-		pokemonObj = GetComponent<PokemonObj> ();
-		battleGUI = new BattleGUI(pokemonObj);
+
 
 	}
-	void Update()
-		
-	{	
-		
-		
-	}	
-	void OnGUI()
-	{	
-		
-		if(HpBarToggle){	
-			
-			battleGUI.ToggleHud();
+
+	void Start() {
+		battleGUI = gameObject.AddComponent<BattleGUI> ();
+		//gamegui = gameObject.GetComponent<GameGUI>();
+	}
+
+	void OnGUI() {
+		if (HpBarToggle) {
+			battleGUI.pokemonObj = Player.pokemon.obj;
+			battleGUI.ToggleHud ();
+		} else {
+			Destroy(battleGUI);
 		}
 	}
 	
 	
 	
-	public void FloatingHPbar(){
+	public void FloatingHPbar() {
 		
 		//GUI.Label (new Rect (x - 40, y - 200, 200, 20), "HP: " + currentHealth.ToString () + "/" + health.ToString ());
 		

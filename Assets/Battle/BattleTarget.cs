@@ -1,38 +1,42 @@
+/*
+ * This class handles clicking and pressing Tab to target wild pokemon.
+ * 
+ * TO DO!
+ * 	restrict attacks to only targeted pokemon.
+ * 	tie into battleGUI.ToggleHud()
+ * 
+ * BUGS!
+ * 	Target a pokemon, then attack a different pokemon, results in two target windows overlayed.
+ */
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
 public class BattleTarget : MonoBehaviour {
 	private List<Transform> allPokemon = new List<Transform>();
-	private Transform targetedPokemon;
+	public Transform targetedPokemon{ get; set; }
 	private Transform playerTransform;
-	public bool activeTarget = false;
-	GameGUI gamegui = new GameGUI();
+	public bool activeTarget{ get; set; }
 	public GameObject highlightSparkles;
+	PokemonWild pokemonWild;
+	Pokemon pokemon;
+	BattleGUI battleGUI;
+	int tabCount = 0;
 
 	void Start() {
-		Debug.Log ("Target started");
 		allPokemon = new List<Transform>();
-		Debug.Log ("new list initiated");
 		targetedPokemon = null;
-		//playerTransform = transform;
-		Debug.Log ("player position set");
-		//AddTargetPokemon();
-	}
-
-	void OnEnable() {
-		//gamegui.SetChatWindow ("Enabled");
+		battleGUI = gameObject.AddComponent<BattleGUI> ();
 	}
 
 	void Update() {
-
 		if (Input.GetMouseButtonDown(0)){ // when button clicked...
 			RaycastHit hit; // cast a ray from mouse pointer:
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			// if enemy hit...
 			if (Physics.Raycast(ray, out hit) && hit.transform.CompareTag("pokemon")){
 				//UnHighlightTarget();
-				//gamegui.SetChatWindow("hit");
 				TargetPokemon(hit.transform);
 			}
 		}
@@ -43,13 +47,18 @@ public class BattleTarget : MonoBehaviour {
 			}
 			TargetPokemon(FindNearestPokemon());
 		}
-		/*
-		if (Input.GetKey(KeyCode.Escape) && GetActiveTarget()){
-			SetActiveTarget(false);
+		if (Input.GetKey(KeyCode.Escape) && activeTarget){
+			activeTarget = false;
 		}
-		*/
-		if (activeTarget) {
-			//highlightSparkles.transform.position=targetedPokemon.transform.position;
+	}
+
+	void OnGUI() {
+		if (activeTarget && targetedPokemon != null) {
+			pokemonWild = targetedPokemon.GetComponent<PokemonWild>();
+			pokemon = pokemonWild.pokemonObj.pokemon;
+			battleGUI.pokemonObj = pokemonWild.pokemonObj;
+			//battleGUI.ToggleHud();
+			battleGUI.EnemyTargetWindow(pokemon);
 		}
 	}
 
@@ -62,24 +71,11 @@ public class BattleTarget : MonoBehaviour {
 	private void AddTarget(Transform addThisPokemon) {
 		allPokemon.Add(addThisPokemon);
 	}
-	/*
-	private void TargetPokemon(Transform targetThis) {
-		targetedPokemon = targetThis;
-	}
-*/
-	public Transform GetTargetPokemon() {
-		return targetedPokemon;
-	}
-	/*
-	public GameObject GetHighlightSparkles() {
-		return this.highlightSparkles;
-	}
-	*/
+
 	public Transform GetHighlightSparkles() {
 		return this.highlightSparkles.transform;
 	}
 	private void SortTargetsByDistance() {
-		Debug.Log ("Sort By Distance");
 		allPokemon.Sort (delegate(Transform t1, Transform t2) {
 				return Vector3.Distance (t1.position, playerTransform.position).CompareTo (Vector3.Distance (t2.position, playerTransform.position));
 		});
@@ -94,6 +90,8 @@ public class BattleTarget : MonoBehaviour {
 	}
 
 	private Transform FindNearestPokemon() {
+		int currentTabCount = tabCount;
+		tabCount++;
 		playerTransform = Player.trainer.transform;
 		int numFound = allPokemon.Count;
 		if (numFound == 0) {
@@ -102,53 +100,30 @@ public class BattleTarget : MonoBehaviour {
 		//LimitTargetDistance(float 25.0)
 		numFound = allPokemon.Count;
 		SortTargetsByDistance ();
-		//gamegui.SetChatWindow (numFound + " wild pokemon found");
 
-		return allPokemon [0];
+		return allPokemon [currentTabCount];
 	}
 
 	public void TargetPokemon(Transform targetThis) {
-		Debug.Log ("Target Pokemon");
 		if (targetedPokemon != null) {
 			UnHighlightTarget ();
 		}
-		SetTarget(targetThis);
-		gamegui.SetChatWindow("Targeted " + targetThis.name);
+		targetedPokemon = targetThis;
+		activeTarget = true;
 		HighlightTarget();
-		//gamegui.SetChatWindow ("Position: " + targetedPokemon.GetInstanceID().ToString());
 	}
 
 	public void HighlightTarget() {
-		//gamegui.SetChatWindow ("highlighting");
 		highlightSparkles = (GameObject)Instantiate (Resources.Load ("ReturnEffect"));
-		SetActiveTarget (true);
 	}
 
 	public void UnHighlightTarget() {
-		//gamegui.SetChatWindow ("un highlighting");
 		targetedPokemon = null;
-		SetActiveTarget (false);
+		activeTarget = false;
 		/*
 		if (highlightSparkles != null) {
 			Destroy (highlightSparkles);
 		}
 		*/
 	}
-
-	public Transform GetTarget() {
-		return targetedPokemon;
-	}
-
-	public void SetTarget(Transform newTarget) {
-		targetedPokemon = newTarget;
-	}
-
-	public bool GetActiveTarget() {
-		return activeTarget;
-	}
-
-	public void SetActiveTarget(bool status) {
-		activeTarget = status;
-	}
-
 }

@@ -9,13 +9,17 @@ public class Player : MonoBehaviour {
 	public static Trainer trainer = null;
 	public static Pokemon pokemon {get{return trainer.party.GetActivePokemon();} set{}}
 	public static bool pokemonActive = false;
-	public static PokemonGUI pokemonGUI = new PokemonGUI();
-	public static GameGUI gamegui = new GameGUI();
+	//public static PokemonGUI pokemonGUI = new PokemonGUI();
+	public PokemonGUI pokemonGUI;
+	public static GameGUI gamegui;
 
 	void Start(){
 		trainer = GameObject.Find("Player").GetComponent<Trainer>();
-		gameObject.AddComponent ("CameraControl");
-		trainer.gameObject.AddComponent ("PlayerMovement");
+		gameObject.AddComponent<CameraControl> ();
+		trainer.gameObject.AddComponent<PlayerMovement> ();
+		gamegui = gameObject.AddComponent<GameGUI> ();
+		pokemonGUI = gameObject.AddComponent<PokemonGUI> ();
+		gameObject.AddComponent<BattleTarget> ();
 	}
 
 	void Update(){
@@ -34,6 +38,21 @@ public class Player : MonoBehaviour {
 		} else {
 			Screen.lockCursor = true;
 			Screen.showCursor = false;
+		}
+
+		//capture pokemon
+		if(Input.GetKeyDown("c")) {
+			CapturePokemon();
+		}
+		
+		//chat window
+		if(Input.GetKeyDown ("i")){
+			if(GameGUI.chatActive)
+				GameGUI.chatActive=false;
+			else
+				GameGUI.chatActive=true;
+			
+			click = true;
 		}
 
 		//player control
@@ -72,33 +91,34 @@ public class Player : MonoBehaviour {
 			pokemon.obj.Return();
 		}
 		if(Input.GetKeyDown ("x")){
-			if(PokemonGUI.HpBarToggle)
-				PokemonGUI.HpBarToggle=false;
+			if(pokemonGUI.HpBarToggle) 
+				pokemonGUI.HpBarToggle=false;
 			else
-				PokemonGUI.HpBarToggle=true;
-			
-			
+				pokemonGUI.HpBarToggle=true;
 		}
-		
-		//if (Input.GetKeyDown (KeyCode.K) && !GameGUI.menuActive) {
-			//if (pokemonActive)
-			//GameGUI.dataWindow = !GameGUI.dataWindow;
-		
-				//}
+	
+		/*
+		if (Input.GetKeyDown (KeyCode.K) && !GameGUI.menuActive) {
+			if (pokemonActive) {
+				GameGUI.dataWindow = !GameGUI.dataWindow;
+			}
+		}
+		*/
 
 		if (Input.GetKeyDown ("h")) {
 			PokeCenter.HealPokemon ();
 		}
-		if (Input.GetKeyDown(KeyCode.Escape) && !click){
-			if (pokemonActive)
-			{
-				pokemonActive = false;
+		//if (Input.GetKeyDown(KeyCode.Escape) && !click){
+		if (Input.GetKeyDown(KeyCode.Escape)) {
+			if (pokemonActive) {
 				pokemon.obj.Return();
+				pokemonActive = false;
 				Vector3 vel = Quaternion.Euler(0,CameraControl.ay,0) * (Vector3.forward*Input.GetAxis("Vertical") + Vector3.right*Input.GetAxis("Horizontal"));
 				trainer.SetVelocity(vel);
 			}
-			else
+			else {
 				GameGUI.menuActive = !GameGUI.menuActive;
+			}
 			click = true;
 		}
 	}
@@ -126,7 +146,7 @@ public class Player : MonoBehaviour {
 				}
 			}
 		}
-		
+
 		var itemsCount = trainer.inventory.items.Count;
 		
 		//throw pokemon
@@ -162,24 +182,7 @@ public class Player : MonoBehaviour {
 			GameGUI.dataWindow = !GameGUI.dataWindow;
 
 		}
-		
-		//capture pokemon
-		if(Input.GetKeyDown("c")) {
-			GameGUI gamegui = GetComponent<GameGUI>();
-			CapturePokemon();
-			click = true;
-		}
-		
-		//chat window
-		if(Input.GetKeyDown ("i")){
-			if(GameGUI.chatActive)
-				GameGUI.chatActive=false;
-			else
-				GameGUI.chatActive=true;
-			
-			click = true;
-		}
-	
+
 		/*
 	 * don't try using this right now, because it doesn't exist!
 		if (Input.GetKeyDown ("k")) {
@@ -207,11 +210,10 @@ public class Player : MonoBehaviour {
 		        && !Input.GetMouseButton(0) && !Input.GetMouseButton(1));
 	}
 
-	public static void CapturePokemon(){
-		/*
-		GameGUI gamegui = new GameGUI();
-		Debug.LogError("Capture Pokemon");
-		Vector3 pokemonPositon = pokemonObj.transform.position;
+	public void CapturePokemon(){
+		Pokeball pokeball = this.gameObject.AddComponent<Pokeball> ();
+		//Vector3 pokemonPositon = pokemonObj.transform.position;
+		Vector3 pokemonPositon = pokemon.obj.enemy.transform.position;
 		GameObject ball = (GameObject)Instantiate(Resources.Load("Pokeball"));
 		//ball.transform.position = GameObject.Find("_PokeballHolder").transform.position;
 		GameObject.Find ("_PokeballHolder").transform.LookAt(pokemonPositon);
@@ -219,7 +221,9 @@ public class Player : MonoBehaviour {
 		//ball.rigidbody.AddForce
 		//	( Camera.main.transform.forward*500+ Camera.main.transform.up*300 );
 		ball.rigidbody.AddForce(pokemonPositon*500 + Camera.main.transform.up*300);
-		Pokeball.CapturePokemon();
-		Destroy (ball, 1);*/
+		//Pokeball.CapturePokemon();
+		pokeball.CapturePokemon ();
+		Destroy (ball, 1);
+		Destroy (pokeball);
 	}
 }

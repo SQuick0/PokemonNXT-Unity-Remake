@@ -52,6 +52,11 @@ public class PokemonDomesticated : MonoBehaviour {
 		GUImgr.DrawBar(new Rect(35,ypos+5,200,10), pokemonObj.pokemon.xp, GUImgr.xp);
 
 		//current target
+		/*
+		 * UPDATE ME!
+		 * use BattleGUI EnemyTargetWindow(Pokemon pokemon)
+		 * instead of drawing this window
+		 */
 		if (pokemonObj.enemy!=null){
 			if (pokemonObj.enemy.pokemon!=null){
 				GUI.DrawTexture(new Rect(0,0,200,60), GUImgr.gradRight);
@@ -59,7 +64,7 @@ public class PokemonDomesticated : MonoBehaviour {
 				GUI.Label(new Rect(10,ypos,200,20), pokemonObj.enemy.name+" lvl"+pokemonObj.enemy.pokemon.level.ToString());
 				ypos+=20;
 				GUI.Label(new Rect(10,ypos,200,20), "HP");
-				GUImgr.DrawBar(new Rect(35,ypos+5,200,10), pokemonObj.enemy.pokemon.hp, GUImgr.hp);;
+				GUImgr.DrawBar(new Rect(35,ypos+5,200,10), pokemonObj.enemy.pokemon.hp, GUImgr.hp);
 			}
 		}
 

@@ -44,7 +44,7 @@ public class Pokemon{
 	}
 	
 	public Pokemon(int number, bool isPlayer, int level){
-		Debug.Log("New "+GetName(number));
+		//Debug.Log("New "+GetName(number));
 		this.number = number;
 		this.isPlayer = isPlayer;
 		name = GetName(number);
@@ -215,7 +215,7 @@ public class Pokemon{
 	}
 	public static int GetNumber(string name){
 		name = name.ToLower();
-		Debug.Log(name);
+		//Debug.Log(name);
 		switch(name){
 		case "bulbasaur":	return 1;
 		case "charmander":	return 4;
